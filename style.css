@@ -547,9 +547,9 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
   gap: 6px;
   padding: 6px 12px;
   border-radius: 999px;
-  border: 1.5px solid #3b82f6;
-  background: rgba(59,130,246,0.08);
-  color: #2563eb;
+  border: 1.5px solid var(--c-accent);
+  background: var(--c-accent-bg);
+  color: var(--c-accent);
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
@@ -557,15 +557,15 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
   outline: none;
 }
 .nav-badge-btn:hover {
-  background: rgba(59,130,246,0.15);
-  border-color: #2563eb;
+  background: var(--c-accent-bg-2);
+  border-color: var(--c-accent-dim);
   transform: translateY(-1px);
-  box-shadow: 0 2px 10px rgba(59,130,246,0.25);
+  box-shadow: 0 2px 10px rgba(163,114,42,0.25);
 }
 .nav-badge-dot {
   width: 7px;
   height: 7px;
-  background: #3b82f6;
+  background: var(--c-accent);
   border-radius: 50%;
   animation: badgePulse 1.6s ease-in-out infinite;
 }
@@ -573,12 +573,12 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
   0%, 100% {
     transform: scale(1);
     opacity: 1;
-    box-shadow: 0 0 0 0 rgba(59,130,246,0.4);
+    box-shadow: 0 0 0 0 rgba(163,114,42,0.4);
   }
   50% {
     transform: scale(1.1);
     opacity: 0.9;
-    box-shadow: 0 0 0 8px rgba(59,130,246,0);
+    box-shadow: 0 0 0 8px rgba(163,114,42,0);
   }
 }
 .nav-badge-text {
@@ -632,13 +632,13 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
   border-radius: 999px;
   font-size: 11px;
   font-weight: 600;
-  background: rgba(16,185,129,0.1);
-  color: #059669;
+  background: var(--c-accent-bg);
+  color: var(--c-accent);
 }
 .status-dot {
   width: 7px;
   height: 7px;
-  background: #10b981;
+  background: var(--c-accent);
   border-radius: 50%;
 }
 

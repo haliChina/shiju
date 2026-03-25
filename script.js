@@ -395,6 +395,29 @@ document.getElementById('filterResetBtn').addEventListener('click', () => {
 });
 
 /* ── 批量操作 ── */
+function toggleBatchMode() {
+  isBatchMode = !isBatchMode;
+  selectedIds.clear();
+  const bar = document.getElementById('batchBar');
+  const cardsGrid = document.getElementById('cardsGrid');
+  if (!isBatchMode) {
+    if (bar) bar.classList.add('hidden');
+    if (cardsGrid) cardsGrid.classList.remove('batch-mode');
+  } else {
+    showToast('已进入批量选择模式', 'info');
+  }
+  renderCards();
+}
+
+function openSettings() {
+  refreshStats();
+  refreshTagMgmt();
+  refreshCollectionMgmt();
+  applyThemeSetting(currentThemeSetting);
+  applySourceSetting(randomSource);
+  openModal('settingsOverlay');
+}
+
 function updateBatchBar() {
   const bar = document.getElementById('batchBar');
   const batchCount = document.getElementById('batchCount');
@@ -785,7 +808,10 @@ function renderReadingPage() {
   
   // Scroll back to top of reading area on every page change
   const scrollEl = document.querySelector('.reading-scroll');
-  if (scrollEl) scrollEl.scrollTop = 0;
+  if (scrollEl) {
+    scrollEl.scrollTop = 0;
+    scrollEl.scrollTo({ top: 0, behavior: 'auto' });
+  }
 }
 function exitReadingMode() {
   const readingOverlay = document.getElementById('readingOverlay');
@@ -1766,9 +1792,10 @@ async function downloadShareCard() {
   try {
     const canvas = await html2canvas(cardEl, {
       scale: 2,
-      backgroundColor: null,
+      backgroundColor: '#ffffff',
       logging: false,
-      useCORS: true
+      useCORS: true,
+      allowTaint: true
     });
     
     const a = document.createElement('a');
