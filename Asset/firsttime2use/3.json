@@ -1,0 +1,22 @@
+[
+  {"id":"m001","content":"内容为王，创意无界。","author":"新媒体箴言","tags":["新媒体","创作"],"createdAt":1700200001000,"favorite":false,"rating":0},
+  {"id":"m002","content":"你永远不知道，哪句话会成为别人今天的救赎。","author":"网络","tags":["新媒体","人文"],"createdAt":1700200002000,"favorite":false,"rating":0},
+  {"id":"m003","content":"流量是表象，共鸣才是王道。","author":"内容运营","tags":["新媒体","运营"],"createdAt":1700200003000,"favorite":false,"rating":0},
+  {"id":"m004","content":"好的标题是内容的一半。","author":"编辑法则","tags":["新媒体","写作"],"createdAt":1700200004000,"favorite":false,"rating":0},
+  {"id":"m005","content":"在这个注意力稀缺的时代，能让人停下来看完，就是成功。","author":"内容策略","tags":["新媒体","运营"],"createdAt":1700200005000,"favorite":false,"rating":0},
+  {"id":"m006","content":"最好的文案，是让用户忘记这是广告。","author":"营销哲学","tags":["新媒体","文案"],"createdAt":1700200006000,"favorite":false,"rating":0},
+  {"id":"m007","content":"人们不购买产品，他们购买更好版本的自己。","author":"Seth Godin","tags":["新媒体","营销"],"createdAt":1700200007000,"favorite":false,"rating":0},
+  {"id":"m008","content":"一条视频，改变不了世界，但可能改变一个人的今天。","author":"创作者说","tags":["新媒体","人文"],"createdAt":1700200008000,"favorite":false,"rating":0},
+  {"id":"m009","content":"数据会说谎，但用户的真实反应不会。","author":"产品思维","tags":["新媒体","运营"],"createdAt":1700200009000,"favorite":false,"rating":0},
+  {"id":"m010","content":"写作是最便宜的表达，也是最昂贵的练习。","author":"写作感悟","tags":["新媒体","写作"],"createdAt":1700200010000,"favorite":false,"rating":0},
+  {"id":"m011","content":"爆款不是偶然，是无数次迭代后的必然。","author":"运营经验","tags":["新媒体","运营"],"createdAt":1700200011000,"favorite":false,"rating":0},
+  {"id":"m012","content":"每一个点赞，都是一次无声的认可。","author":"创作者感悟","tags":["新媒体","人文"],"createdAt":1700200012000,"favorite":false,"rating":0},
+  {"id":"m013","content":"短视频的本质，是用极短时间传递极强情绪。","author":"视频创作","tags":["新媒体","创作"],"createdAt":1700200013000,"favorite":false,"rating":0},
+  {"id":"m014","content":"做内容，就是在和用户的情感建立连接。","author":"内容方法论","tags":["新媒体","创作"],"createdAt":1700200014000,"favorite":false,"rating":0},
+  {"id":"m015","content":"算法推送你想看的，但你的品位由你自己决定。","author":"媒体评论","tags":["新媒体","思考"],"createdAt":1700200015000,"favorite":false,"rating":0},
+  {"id":"m016","content":"IP不是标签，是你给这个世界留下的独特印记。","author":"个人品牌","tags":["新媒体","创作"],"createdAt":1700200016000,"favorite":false,"rating":0},
+  {"id":"m017","content":"当你的内容真的帮助了一个人，再小的账号也有意义。","author":"创作初心","tags":["新媒体","人文"],"createdAt":1700200017000,"favorite":false,"rating":0},
+  {"id":"m018","content":"选题决定上限，执行决定下限。","author":"内容运营","tags":["新媒体","创作"],"createdAt":1700200018000,"favorite":false,"rating":0},
+  {"id":"m019","content":"在信息爆炸的世界里，简洁是最高级的复杂。","author":"设计哲学","tags":["新媒体","设计"],"createdAt":1700200019000,"favorite":false,"rating":0},
+  {"id":"m020","content":"每个优质创作者背后，都有一个持续输入的灵魂。","author":"创作者研究","tags":["新媒体","创作"],"createdAt":1700200020000,"favorite":false,"rating":0}
+]

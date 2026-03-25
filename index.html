@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>拾句 · 好词好句收集器</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='18 12 430 374'><path fill='%23a3722a' d='M259.67,213.87c0-117.21,112.6-186.38,184.66-198.87v69.17c-39.41,10.57-86.7,64.37-88.95,122.98h88.95v72.91c0,56.3-52.6,101.94-117.5,101.94h-67.16V213.87z M21.34,213.87C21.34,96.66,133.94,27.49,206,15v69.17c-39.41,10.57-86.7,64.37-88.95,122.98h87.82v72.91c0,56.3-52.6,101.94-117.5,101.94H21.34V213.87z'/></svg>">
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;600&display=swap" rel="stylesheet" />
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+  <symbol id="ic-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></symbol>
+  <symbol id="ic-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></symbol>
+  <symbol id="ic-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></symbol>
+  <symbol id="ic-tag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></symbol>
+  <symbol id="ic-shuffle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/></symbol>
+  <symbol id="ic-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></symbol>
+  <symbol id="ic-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></symbol>
+  <symbol id="ic-edit" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></symbol>
+  <symbol id="ic-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></symbol>
+  <symbol id="ic-book" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></symbol>
+  <symbol id="ic-search-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8.5" y1="8.5" x2="13.5" y2="13.5"/><line x1="13.5" y1="8.5" x2="8.5" y2="13.5"/></symbol>
+  <symbol id="ic-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></symbol>
+  <symbol id="ic-alert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></symbol>
+  <symbol id="ic-info" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></symbol>
+  <symbol id="ic-quote" viewBox="0 0 24 24" fill="currentColor"><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z"/><path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z"/></symbol>
+  <symbol id="ic-calendar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></symbol>
+  <symbol id="ic-user" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></symbol>
+  <symbol id="ic-chevron-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></symbol>
+  <symbol id="ic-chevron-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></symbol>
+  <symbol id="ic-chevron-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></symbol>
+  <symbol id="ic-sparkle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></symbol>
+  <symbol id="ic-warning" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></symbol>
+  <symbol id="ic-star" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></symbol>
+  <symbol id="ic-star-fill" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></symbol>
+  <symbol id="ic-sort" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></symbol>
+  <symbol id="ic-filter" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></symbol>
+  <symbol id="ic-download" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></symbol>
+  <symbol id="ic-upload" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></symbol>
+  <symbol id="ic-settings" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></symbol>
+  <symbol id="ic-book-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></symbol>
+  <symbol id="ic-select" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></symbol>
+  <symbol id="ic-merge" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><path d="M6 21V9a9 9 0 0 0 9 9"/></symbol>
+  <symbol id="ic-bar-chart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></symbol>
+  <symbol id="ic-pencil" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></symbol>
+  <symbol id="ic-monitor" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><polyline points="8 21 12 17 16 21"/></symbol>
+  <symbol id="ic-file-pdf" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M9 15v-4"/><path d="M9 11h2a2 2 0 0 1 0 4H9"/><path d="M14 15v-4h1.5a1.5 1.5 0 0 1 0 3H14"/></symbol>
+  <symbol id="ic-pack-student" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5-10-5z"/><path d="M6 12v5c0 1.7 2.7 3 6 3s6-1.3 6-3v-5"/></symbol>
+  <symbol id="ic-pack-bay" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18h18"/><path d="M3 18V9l9-5 9 5v9"/><path d="M9 18v-6h6v6"/><line x1="12" y1="4" x2="12" y2="2"/><line x1="6" y1="9" x2="6" y2="7"/><line x1="18" y1="9" x2="18" y2="7"/></symbol>
+  <symbol id="ic-pack-media" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/><circle cx="12" cy="11" r="3"/><polyline points="10.5 10 12 8.5 13.5 10"/></symbol>
+  <symbol id="ic-check-circle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></symbol>
+  <symbol id="ic-logo" viewBox="18 12 430 374">
+    <path fill="currentColor" d="M259.67,213.87c0-117.21,112.6-186.38,184.66-198.87v69.17c-39.41,10.57-86.7,64.37-88.95,122.98h88.95v72.91c0,56.3-52.6,101.94-117.5,101.94h-67.16V213.87z M21.34,213.87C21.34,96.66,133.94,27.49,206,15v69.17c-39.41,10.57-86.7,64.37-88.95,122.98h87.82v72.91c0,56.3-52.6,101.94-117.5,101.94H21.34V213.87z"/>
+  </symbol>
+</svg>
+
+<header class="header">
+  <div class="header-inner">
+    <div class="logo">
+      <div class="logo-mark">
+        <svg class="logo-mark-svg" viewBox="18 12 430 374" aria-hidden="true"><path fill="var(--c-accent)" d="M259.67,213.87c0-117.21,112.6-186.38,184.66-198.87v69.17c-39.41,10.57-86.7,64.37-88.95,122.98h88.95v72.91c0,56.3-52.6,101.94-117.5,101.94h-67.16V213.87z M21.34,213.87C21.34,96.66,133.94,27.49,206,15v69.17c-39.41,10.57-86.7,64.37-88.95,122.98h87.82v72.91c0,56.3-52.6,101.94-117.5,101.94H21.34V213.87z"/></svg>
+      </div>
+      <div class="logo-texts">
+        <span class="logo-name">拾句</span>
+        <span class="logo-sub">好词好句收集器</span>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="count-pill"><span id="totalCount">0</span><span class="count-unit">条收藏</span></div>
+      <button class="theme-cycle-btn" id="themeBtn" title="切换主题" aria-label="切换主题">
+        <svg class="icon theme-cycle-icon" id="themeBtnIcon"><use href="#ic-sun" id="themeBtnUse"/></svg>
+        <span class="theme-cycle-label" id="themeBtnLabel">浅色</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main class="main">
+  <section class="toolbar">
+    <button class="btn btn-primary" id="addBtn"><svg class="icon"><use href="#ic-plus"/></svg><span>添加句子</span></button>
+    <div class="search-wrap">
+      <svg class="icon search-prefix-icon"><use href="#ic-search"/></svg>
+      <input type="text" class="search-input" id="searchInput" placeholder="搜索内容或作者…" autocomplete="off" />
+      <button class="search-clear" id="searchClear" aria-label="清空搜索"><svg class="icon"><use href="#ic-x"/></svg></button>
+    </div>
+    <div class="filter-wrap">
+      <svg class="icon filter-prefix-icon"><use href="#ic-tag"/></svg>
+      <select class="filter-select" id="tagFilter"><option value="">全部标签</option></select>
+      <svg class="icon filter-suffix-icon"><use href="#ic-chevron-down"/></svg>
+    </div>
+    <div class="sort-wrap">
+      <button class="btn btn-outline sort-btn" id="sortBtn">
+        <svg class="icon"><use href="#ic-sort"/></svg>
+        <span id="sortLabel">最新</span>
+        <svg class="icon" style="width:12px;height:12px"><use href="#ic-chevron-down"/></svg>
+      </button>
+      <div class="sort-dropdown" id="sortDropdown">
+        <button class="sort-opt active" data-sort="newest">最新添加</button>
+        <button class="sort-opt" data-sort="oldest">最早添加</button>
+        <button class="sort-opt" data-sort="author-asc">作者 A → Z</button>
+        <button class="sort-opt" data-sort="author-desc">作者 Z → A</button>
+        <button class="sort-opt" data-sort="rating-desc">评分从高到低</button>
+      </div>
+    </div>
+    <button class="btn btn-outline filter-adv-btn" id="filterAdvBtn" title="高级筛选">
+      <svg class="icon"><use href="#ic-filter"/></svg>
+      <span class="filter-adv-badge" id="filterBadge" style="display:none"></span>
+    </button>
+    <div class="toolbar-right">
+      <button class="btn btn-outline" id="randomBtn"><svg class="icon"><use href="#ic-shuffle"/></svg><span>随机一句</span></button>
+      <button class="btn btn-outline icon-only" id="readingModeBtn" title="阅读模式"><svg class="icon"><use href="#ic-book-open"/></svg></button>
+      <button class="btn btn-outline icon-only" id="batchModeBtn" title="批量选择"><svg class="icon"><use href="#ic-select"/></svg></button>
+      <button class="btn btn-outline icon-only" id="settingsBtn" title="设置"><svg class="icon"><use href="#ic-settings"/></svg></button>
+    </div>
+  </section>
+
+  <div class="adv-filter-panel" id="advFilterPanel">
+    <div class="adv-filter-inner">
+      <label class="adv-filter-item"><input type="checkbox" id="filterFavorite" /><span>仅显示收藏</span></label>
+      <label class="adv-filter-item"><input type="checkbox" id="filterExact" /><span>精确匹配</span></label>
+      <div class="adv-filter-dates">
+        <span class="adv-date-label">添加时间</span>
+        <input type="date" class="date-input" id="filterDateFrom" />
+        <span class="date-sep">至</span>
+        <input type="date" class="date-input" id="filterDateTo" />
+      </div>
+      <button class="btn btn-ghost btn-sm" id="filterResetBtn">重置</button>
+    </div>
+  </div>
+
+  <div class="batch-bar hidden" id="batchBar">
+    <div class="batch-bar-inner">
+      <button class="btn btn-ghost btn-sm" id="selectAllBtn"><svg class="icon"><use href="#ic-check"/></svg>全选</button>
+      <span class="batch-count" id="batchCount">已选 0 项</span>
+      <div class="batch-actions-right">
+        <button class="btn btn-ghost btn-sm" id="batchExportBtn"><svg class="icon"><use href="#ic-download"/></svg>导出选中</button>
+        <button class="btn btn-ghost-danger btn-sm" id="batchDeleteBtn"><svg class="icon"><use href="#ic-trash"/></svg>删除选中</button>
+        <button class="btn btn-ghost btn-sm" id="exitBatchBtn"><svg class="icon"><use href="#ic-x"/></svg>退出</button>
+      </div>
+    </div>
+  </div>
+
+  <section class="cards-section">
+    <div class="cards-grid" id="cardsGrid"></div>
+    <div class="empty-state" id="emptyState">
+      <div class="empty-icon-bg"><svg class="empty-svg"><use href="#ic-book"/></svg></div>
+      <h3 class="empty-title">还没有收藏的句子</h3>
+      <p class="empty-desc">遇见打动你的文字，就把它收藏起来吧</p>
+      <button class="btn btn-primary" id="emptyAddBtn"><svg class="icon"><use href="#ic-plus"/></svg>添加第一句</button>
+    </div>
+    <div class="empty-state" id="noResultState" style="display:none;">
+      <div class="empty-icon-bg"><svg class="empty-svg"><use href="#ic-search-x"/></svg></div>
+      <h3 class="empty-title">没有找到相关内容</h3>
+      <p class="empty-desc">试试其他关键词或筛选条件</p>
+    </div>
+  </section>
+</main>
+
+<!-- 添加/编辑弹窗 -->
+<div class="modal-overlay" id="editOverlay">
+  <div class="modal" id="editModal" role="dialog" aria-modal="true" aria-labelledby="editModalTitle">
+    <div class="modal-header">
+      <h2 class="modal-title" id="editModalTitle">添加好句</h2>
+      <button class="modal-close" id="editClose" aria-label="关闭"><svg class="icon"><use href="#ic-x"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label" for="contentInput">句子内容 <span class="badge-required">必填</span></label>
+        <textarea class="form-textarea" id="contentInput" placeholder="请输入好词好句…" rows="5" maxlength="500"></textarea>
+        <div class="field-footer"><span class="field-hint">支持换行输入</span><span class="char-count" id="charCount">0 / 500</span></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="authorInput"><svg class="icon icon-sm"><use href="#ic-user"/></svg>作者 / 来源</label>
+        <input type="text" class="form-input" id="authorInput" placeholder="如：鲁迅、《红楼梦》、网络…" maxlength="50" />
+      </div>
+      <div class="form-group">
+        <label class="form-label"><svg class="icon icon-sm"><use href="#ic-tag"/></svg>分类标签 <span class="field-hint-inline">最多 5 个</span></label>
+        <div class="tag-editor">
+          <div class="tag-selected-area" id="tagSelected">
+            <span class="tag-placeholder" id="tagPlaceholder">点击下方选择或输入自定义标签</span>
+          </div>
+          <div class="tag-editor-input">
+            <input type="text" class="tag-text-input" id="tagCustomInput" placeholder="自定义标签，回车添加…" maxlength="20" />
+            <button class="tag-add-btn" id="tagAddBtn" aria-label="添加标签"><svg class="icon"><use href="#ic-plus"/></svg></button>
+          </div>
+          <div class="tag-preset-list" id="tagPresets"></div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" id="editCancel">取消</button>
+      <button class="btn btn-primary" id="editSave">保存句子</button>
+    </div>
+  </div>
+</div>
+
+<!-- 详情弹窗 -->
+<div class="modal-overlay" id="detailOverlay">
+  <div class="modal modal-detail" role="dialog" aria-modal="true">
+    <div class="modal-header">
+      <h2 class="modal-title">句子详情</h2>
+      <button class="modal-close" id="detailClose" aria-label="关闭"><svg class="icon"><use href="#ic-x"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div class="detail-quote-icon"><svg class="icon-quote-deco"><use href="#ic-quote"/></svg></div>
+      <blockquote class="detail-content" id="detailContent"></blockquote>
+      <div class="detail-meta">
+        <div class="detail-meta-item"><svg class="icon icon-sm"><use href="#ic-user"/></svg><span id="detailAuthor"></span></div>
+        <div class="detail-meta-item"><svg class="icon icon-sm"><use href="#ic-calendar"/></svg><span id="detailDate"></span></div>
+      </div>
+      <div class="detail-tags" id="detailTags"></div>
+      <div class="detail-rating-wrap">
+        <span class="rating-label">评分</span>
+        <div class="rating-stars" id="detailRating" role="group" aria-label="评分"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost-danger" id="detailDelete"><svg class="icon"><use href="#ic-trash"/></svg>删除</button>
+      <button class="btn btn-ghost" id="detailFavorite"><svg class="icon" id="detailFavIcon"><use href="#ic-star"/></svg><span id="detailFavText">收藏</span></button>
+      <button class="btn btn-primary" id="detailEdit"><svg class="icon"><use href="#ic-edit"/></svg>编辑</button>
+    </div>
+  </div>
+</div>
+
+<!-- 随机推荐弹窗 -->
+<div class="modal-overlay" id="randomOverlay">
+  <div class="modal modal-random" id="randomModal" role="dialog" aria-modal="true">
+    <div class="modal-header random-header">
+      <div class="random-title-row">
+        <div class="random-icon-badge"><svg class="icon"><use href="#ic-sparkle"/></svg></div>
+        <h2 class="modal-title">随机推荐</h2>
+      </div>
+      <button class="modal-close" id="randomClose" aria-label="关闭"><svg class="icon"><use href="#ic-x"/></svg></button>
+    </div>
+    <div class="modal-body random-body">
+      <div class="random-quote-deco"><svg class="icon-quote-lg"><use href="#ic-quote"/></svg></div>
+      <blockquote class="random-content" id="randomContent"></blockquote>
+      <p class="random-author" id="randomAuthor"></p>
+      <div class="random-tags" id="randomTags"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" id="randomAgain"><svg class="icon"><use href="#ic-shuffle"/></svg>再来一句</button>
+      <button class="btn btn-primary" id="randomClose2">好的</button>
+    </div>
+  </div>
+</div>
+
+<!-- 删除确认弹窗 -->
+<div class="modal-overlay" id="deleteOverlay">
+  <div class="modal modal-sm" role="dialog" aria-modal="true">
+    <div class="modal-header">
+      <div class="delete-header-title">
+        <div class="delete-warn-icon"><svg class="icon"><use href="#ic-warning"/></svg></div>
+        <h2 class="modal-title" id="deleteModalTitle">确认删除</h2>
+      </div>
+      <button class="modal-close" id="deleteClose" aria-label="关闭"><svg class="icon"><use href="#ic-x"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <p class="delete-msg" id="deleteMsg">确定要删除这条好句吗？删除后数据将无法恢复。</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" id="deleteCancelBtn">取消</button>
+      <button class="btn btn-danger" id="deleteConfirmBtn"><svg class="icon"><use href="#ic-trash"/></svg>确认删除</button>
+    </div>
+  </div>
+</div>
+
+<!-- 设置面板 -->
+<div class="modal-overlay" id="settingsOverlay">
+  <div class="modal modal-settings" role="dialog" aria-modal="true">
+    <div class="modal-header">
+      <h2 class="modal-title">设置</h2>
+      <button class="modal-close" id="settingsClose" aria-label="关闭"><svg class="icon"><use href="#ic-x"/></svg></button>
+    </div>
+    <div class="settings-tabs">
+      <button class="settings-tab active" data-tab="appear"><svg class="icon icon-sm"><use href="#ic-sun"/></svg>外观</button>
+      <button class="settings-tab" data-tab="stats"><svg class="icon icon-sm"><use href="#ic-bar-chart"/></svg>统计</button>
+      <button class="settings-tab" data-tab="data"><svg class="icon icon-sm"><use href="#ic-download"/></svg>数据</button>
+      <button class="settings-tab" data-tab="tags"><svg class="icon icon-sm"><use href="#ic-tag"/></svg>标签管理</button>
+    </div>
+    <div class="modal-body settings-body">
+      <div class="settings-pane active" id="pane-appear">
+        <div class="appearance-section">
+          <div class="appearance-section-title">主题模式</div>
+          <fieldset class="switcher" id="themeSwitcher">
+            <legend class="switcher__legend">选择主题</legend>
+            <label class="switcher__option">
+              <input class="switcher__input" type="radio" name="themeMode" value="light" c-option="1" id="themeLight" />
+              <svg class="switcher__icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 36 36">
+                <path fill="var(--c)" fill-rule="evenodd" d="M18 12a6 6 0 1 1 0 12 6 6 0 0 1 0-12Zm0 2a4 4 0 1 0 0 8 4 4 0 0 0 0-8Z" clip-rule="evenodd"/>
+                <path fill="var(--c)" d="M17 6.038a1 1 0 1 1 2 0v3a1 1 0 0 1-2 0v-3ZM24.244 7.742a1 1 0 1 1 1.618 1.176L24.1 11.345a1 1 0 1 1-1.618-1.176l1.763-2.427ZM29.104 13.379a1 1 0 0 1 .618 1.902l-2.854.927a1 1 0 1 1-.618-1.902l2.854-.927ZM29.722 20.795a1 1 0 0 1-.619 1.902l-2.853-.927a1 1 0 1 1 .618-1.902l2.854.927ZM25.862 27.159a1 1 0 0 1-1.618 1.175l-1.763-2.427a1 1 0 1 1 1.618-1.175l1.763 2.427ZM19 30.038a1 1 0 0 1-2 0v-3a1 1 0 1 1 2 0v3ZM11.755 28.334a1 1 0 0 1-1.618-1.175l1.764-2.427a1 1 0 1 1 1.618 1.175l-1.764 2.427ZM6.896 22.697a1 1 0 1 1-.618-1.902l2.853-.927a1 1 0 1 1 .618 1.902l-2.853.927ZM6.278 15.28a1 1 0 1 1 .618-1.901l2.853.927a1 1 0 1 1-.618 1.902l-2.853-.927ZM10.137 8.918a1 1 0 0 1 1.618-1.176l1.764 2.427a1 1 0 0 1-1.618 1.176l-1.764-2.427Z"/>
+              </svg>
+            </label>
+            <label class="switcher__option">
+              <input class="switcher__input" type="radio" name="themeMode" value="dark" c-option="2" id="themeDark" />
+              <svg class="switcher__icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 36 36">
+                <path fill="var(--c)" d="M12.5 8.473a10.968 10.968 0 0 1 8.785-.97 7.435 7.435 0 0 0-3.737 4.672l-.09.373A7.454 7.454 0 0 0 28.732 20.4a10.97 10.97 0 0 1-5.232 7.125l-.497.27c-5.014 2.566-11.175.916-14.234-3.813l-.295-.483C5.53 18.403 7.13 11.93 12.017 8.77l.483-.297Zm4.234.616a8.946 8.946 0 0 0-2.805.883l-.429.234A9 9 0 0 0 10.206 22.5l.241.395A9 9 0 0 0 22.5 25.794l.416-.255a8.94 8.94 0 0 0 2.167-1.99 9.433 9.433 0 0 1-2.782-.313c-5.043-1.352-8.036-6.535-6.686-11.578l.147-.491c.242-.745.573-1.44.972-2.078Z"/>
+              </svg>
+            </label>
+            <label class="switcher__option">
+              <input class="switcher__input" type="radio" name="themeMode" value="auto" c-option="3" id="themeAuto" />
+              <svg class="switcher__icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 36 36">
+                <path fill="var(--c)" d="M5 21a1 1 0 0 1 1-1h24a1 1 0 1 1 0 2H6a1 1 0 0 1-1-1ZM12 25a1 1 0 0 1 1-1h10a1 1 0 1 1 0 2H13a1 1 0 0 1-1-1ZM15 29a1 1 0 0 1 1-1h4a1 1 0 1 1 0 2h-4a1 1 0 0 1-1-1ZM18 13a6 6 0 0 1 5.915 7h-2.041A4.005 4.005 0 0 0 18 15a4 4 0 0 0-3.874 5h-2.041A6 6 0 0 1 18 13ZM17 7.038a1 1 0 1 1 2 0v3a1 1 0 0 1-2 0v-3ZM24.244 8.742a1 1 0 1 1 1.618 1.176L24.1 12.345a1 1 0 1 1-1.618-1.176l1.763-2.427ZM29.104 14.379a1 1 0 0 1 .618 1.902l-2.854.927a1 1 0 1 1-.618-1.902l2.854-.927ZM6.278 16.28a1 1 0 1 1 .618-1.901l2.853.927a1 1 0 1 1-.618 1.902l-2.853-.927ZM10.137 9.918a1 1 0 0 1 1.618-1.176l1.764 2.427a1 1 0 0 1-1.618 1.176l-1.764-2.427Z"/>
+              </svg>
+            </label>
+          </fieldset>
+          <p class="appearance-desc" id="themeDesc">当前：浅色模式</p>
+        </div>
+        <div class="appearance-section">
+          <div class="appearance-section-title">随机推荐来源</div>
+          <fieldset class="switcher switcher--two" id="sourceSwitcher">
+            <legend class="switcher__legend">随机来源</legend>
+            <label class="switcher__option">
+              <input class="switcher__input" type="radio" name="randomSource" value="local" c-option="1" id="srcLocal" />
+              <svg class="switcher__icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 36 36">
+                <path fill="var(--c)" d="M30,8H6A2,2,0,0,0,4,10V24a2,2,0,0,0,2,2H14v2H12a1,1,0,0,0,0,2H24a1,1,0,0,0,0-2H22V26H30a2,2,0,0,0,2-2V10A2,2,0,0,0,30,8Zm0,14a2,2,0,0,1-2,2H8a2,2,0,0,1-2-2V10H30Z"/>
+                <circle fill="var(--c)" cx="18" cy="23" r="1"/>
+              </svg>
+            </label>
+            <label class="switcher__option">
+              <input class="switcher__input" type="radio" name="randomSource" value="hitokoto" c-option="2" id="srcHitokoto" />
+              <svg class="switcher__icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 36 36">
+                <path fill="var(--c)" d="M18 4C10.268 4 4 10.268 4 18s6.268 14 14 14 14-6.268 14-14S25.732 4 18 4Zm0 2c6.627 0 12 5.373 12 12S24.627 30 18 30 6 24.627 6 18 11.373 6 18 6Zm-1 4v9h2V10h-2Zm0 11v2h2v-2h-2Z"/>
+              </svg>
+            </label>
+          </fieldset>
+          <div class="thirdparty-warning" id="hitokotoWarning">
+            <strong>提示：</strong>一言随机推荐由第三方「<a href="https://hitokoto.cn" target="_blank" style="color:var(--c-accent)">一言</a>」服务提供，内容多样，请注意甄别。网络不可用时将回退至本地数据。
+          </div>
+        </div>
+      </div>
+      <div class="settings-pane" id="pane-stats">
+        <div class="stats-grid">
+          <div class="stat-card"><div class="stat-value" id="st-total">0</div><div class="stat-label">总数量</div></div>
+          <div class="stat-card"><div class="stat-value" id="st-fav">0</div><div class="stat-label">已收藏</div></div>
+          <div class="stat-card"><div class="stat-value" id="st-tags">0</div><div class="stat-label">标签数</div></div>
+          <div class="stat-card"><div class="stat-value" id="st-month">0</div><div class="stat-label">本月新增</div></div>
+        </div>
+        <div class="stat-section">
+          <div class="stat-section-title">标签分布</div>
+          <div class="tag-dist" id="tagDist"></div>
+        </div>
+      </div>
+      <div class="settings-pane" id="pane-data">
+        <div class="data-action-group">
+          <div class="data-action-desc">将当前所有好词好句导出为 JSON 文件，可用于备份或跨设备迁移。</div>
+          <button class="btn btn-outline w-full" id="exportJsonBtn"><svg class="icon"><use href="#ic-download"/></svg>导出 JSON</button>
+        </div>
+        <div class="data-action-group">
+          <div class="data-action-desc">将当前所有好词好句排版为精美 PDF，可打印或分享。</div>
+          <button class="btn btn-outline w-full" id="exportPdfBtn"><svg class="icon"><use href="#ic-file-pdf"/></svg>导出 PDF</button>
+        </div>
+        <div class="data-action-group">
+          <div class="data-action-desc">从 JSON 文件导入好词好句（不会覆盖现有数据，仅合并新增）。</div>
+          <div class="import-row">
+            <input type="file" id="importFile" accept=".json" class="hidden" />
+            <button class="btn btn-outline" id="importPickBtn"><svg class="icon"><use href="#ic-upload"/></svg>选择文件</button>
+            <button class="btn btn-primary" id="importDoBtn" disabled><svg class="icon"><use href="#ic-check"/></svg>导入</button>
+          </div>
+          <div class="import-filename" id="importFilename"></div>
+        </div>
+        <div class="data-action-group data-action-danger">
+          <div class="data-action-desc"><svg style="width:13px;height:13px;vertical-align:-1px;margin-right:5px;color:var(--c-danger)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>此操作将永久清空所有数据，无法恢复。</div>
+          <button class="btn btn-danger w-full" id="deleteAllBtn"><svg class="icon"><use href="#ic-trash"/></svg>删除所有数据</button>
+        </div>
+      </div>
+      <div class="settings-pane" id="pane-tags">
+        <div class="tag-mgmt-list" id="tagMgmtList"></div>
+        <div class="tag-merge-section">
+          <div class="stat-section-title">合并标签</div>
+          <div class="merge-row">
+            <select class="form-input merge-select" id="mergeFrom"><option value="">选择源标签</option></select>
+            <svg class="icon" style="flex-shrink:0;color:var(--c-text-3)"><use href="#ic-chevron-right"/></svg>
+            <select class="form-input merge-select" id="mergeTo"><option value="">选择目标标签</option></select>
+          </div>
+          <button class="btn btn-outline w-full" id="mergeTagsBtn"><svg class="icon"><use href="#ic-merge"/></svg>合并标签</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 阅读模式 -->
+<div class="reading-overlay hidden" id="readingOverlay">
+  <div class="reading-scroll">
+    <div class="reading-inner">
+      <div class="reading-quote-deco"><svg class="icon-quote-lg"><use href="#ic-quote"/></svg></div>
+      <blockquote class="reading-content" id="readingContent"></blockquote>
+      <p class="reading-author" id="readingAuthor"></p>
+      <div class="reading-tags" id="readingTags"></div>
+      <div class="reading-indicator" id="readingIndicator"></div>
+    </div>
+  </div>
+  <button class="reading-nav reading-prev" id="readingPrev" aria-label="上一句"><svg class="icon"><use href="#ic-chevron-left"/></svg></button>
+  <button class="reading-nav reading-next" id="readingNext" aria-label="下一句"><svg class="icon"><use href="#ic-chevron-right"/></svg></button>
+  <button class="reading-exit" id="readingExit" aria-label="退出阅读模式"><svg class="icon"><use href="#ic-x"/></svg></button>
+</div>
+
+<!-- ── 初次使用引导弹窗 ── -->
+<div class="modal-overlay" id="welcomeOverlay" role="dialog" aria-modal="true" aria-labelledby="welcomeTitle">
+  <div class="modal modal-welcome">
+    <div class="welcome-hero">
+      <div class="welcome-logo-ring">
+        <svg viewBox="18 12 430 374" class="welcome-logo-svg" aria-hidden="true"><path fill="currentColor" d="M259.67,213.87c0-117.21,112.6-186.38,184.66-198.87v69.17c-39.41,10.57-86.7,64.37-88.95,122.98h88.95v72.91c0,56.3-52.6,101.94-117.5,101.94h-67.16V213.87z M21.34,213.87C21.34,96.66,133.94,27.49,206,15v69.17c-39.41,10.57-86.7,64.37-88.95,122.98h87.82v72.91c0,56.3-52.6,101.94-117.5,101.94H21.34V213.87z"/></svg>
+      </div>
+      <h1 class="welcome-title" id="welcomeTitle">欢迎使用拾句</h1>
+      <p class="welcome-subtitle">遇见打动你的文字，把它收藏起来</p>
+    </div>
+
+    <div class="welcome-body">
+      <p class="welcome-desc">首次使用可一键导入配套素材包，快速填充你的好词好句库；也可跳过，自主采集添加专属素材。</p>
+
+      <div class="pack-list">
+        <label class="pack-item" for="pack1">
+          <input type="checkbox" id="pack1" class="pack-checkbox" value="1">
+          <div class="pack-item-inner">
+            <div class="pack-icon"><svg style="width:28px;height:28px"><use href="#ic-pack-student"/></svg></div>
+            <div class="pack-info">
+              <div class="pack-name">基础学生素材包</div>
+              <div class="pack-desc">经典名言·勤学励志·古诗文精选，共 20 条</div>
+            </div>
+            <div class="pack-check"><svg viewBox="0 0 16 16" fill="none"><polyline points="2,8 6,12 14,4" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          </div>
+        </label>
+
+        <label class="pack-item" for="pack2">
+          <input type="checkbox" id="pack2" class="pack-checkbox" value="2">
+          <div class="pack-item-inner">
+            <div class="pack-icon"><svg style="width:28px;height:28px"><use href="#ic-pack-bay"/></svg></div>
+            <div class="pack-info">
+              <div class="pack-name">深港澳主题专属包</div>
+              <div class="pack-desc">大湾区文化·改革开放·深港澳特色，共 20 条</div>
+            </div>
+            <div class="pack-check"><svg viewBox="0 0 16 16" fill="none"><polyline points="2,8 6,12 14,4" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          </div>
+        </label>
+
+        <label class="pack-item" for="pack3">
+          <input type="checkbox" id="pack3" class="pack-checkbox" value="3">
+          <div class="pack-item-inner">
+            <div class="pack-icon"><svg style="width:28px;height:28px"><use href="#ic-pack-media"/></svg></div>
+            <div class="pack-info">
+              <div class="pack-name">新媒体通用素材包</div>
+              <div class="pack-desc">内容创作·运营文案·创作者感悟，共 20 条</div>
+            </div>
+            <div class="pack-check"><svg viewBox="0 0 16 16" fill="none"><polyline points="2,8 6,12 14,4" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          </div>
+        </label>
+      </div>
+
+      <div class="welcome-selected-hint" id="welcomeHint">请勾选要导入的素材包，或直接跳过</div>
+    </div>
+
+    <div class="welcome-footer">
+      <button class="btn btn-ghost" id="welcomeSkipBtn">跳过，自主添加</button>
+      <button class="btn btn-primary" id="welcomeImportBtn" disabled>
+        <svg class="icon"><use href="#ic-download"/></svg>
+        <span id="welcomeImportLabel">导入选中素材包</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container" id="toastContainer" aria-live="polite" aria-atomic="true"></div>
+<script src="script.js"></script>
+</body>
+</html>
