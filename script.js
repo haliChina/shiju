@@ -764,46 +764,77 @@ function enterReadingMode() {
   if (!readingList.length) { showToast('没有可阅读的句子','info'); return; }
   readingIndex = 0;
   renderReadingPage();
-  document.getElementById('readingOverlay').classList.remove('hidden');
-  document.body.style.overflow = 'hidden';
+  const readingOverlay = document.getElementById('readingOverlay');
+  if (readingOverlay) {
+    readingOverlay.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+  }
 }
 function renderReadingPage() {
   const item = readingList[readingIndex];
   if (!item) return;
-  document.getElementById('readingContent').innerHTML  = esc(item.content);
-  document.getElementById('readingAuthor').textContent = item.author||'佚名';
-  document.getElementById('readingTags').innerHTML     = tagsHtml(item.tags||[]);
-  document.getElementById('readingIndicator').textContent = `${readingIndex+1} / ${readingList.length}`;
+  const readingContent = document.getElementById('readingContent');
+  const readingAuthor = document.getElementById('readingAuthor');
+  const readingTags = document.getElementById('readingTags');
+  const readingIndicator = document.getElementById('readingIndicator');
+  
+  if (readingContent) readingContent.innerHTML  = esc(item.content);
+  if (readingAuthor) readingAuthor.textContent = item.author||'佚名';
+  if (readingTags) readingTags.innerHTML     = tagsHtml(item.tags||[]);
+  if (readingIndicator) readingIndicator.textContent = `${readingIndex+1} / ${readingList.length}`;
+  
   // Scroll back to top of reading area on every page change
   const scrollEl = document.querySelector('.reading-scroll');
   if (scrollEl) scrollEl.scrollTop = 0;
 }
 function exitReadingMode() {
-  document.getElementById('readingOverlay').classList.add('hidden');
-  document.body.style.overflow = '';
+  const readingOverlay = document.getElementById('readingOverlay');
+  if (readingOverlay) {
+    readingOverlay.classList.add('hidden');
+    document.body.style.overflow = '';
+  }
 }
-document.getElementById('readingModeBtn').addEventListener('click', enterReadingMode);
-document.getElementById('readingExit').addEventListener('click', exitReadingMode);
-document.getElementById('readingPrev').addEventListener('click', ()=>{ readingIndex=(readingIndex-1+readingList.length)%readingList.length; renderReadingPage(); });
-document.getElementById('readingNext').addEventListener('click', ()=>{ readingIndex=(readingIndex+1)%readingList.length; renderReadingPage(); });
+const readingModeBtn = document.getElementById('readingModeBtn');
+if (readingModeBtn) {
+  readingModeBtn.addEventListener('click', enterReadingMode);
+}
+const readingExit = document.getElementById('readingExit');
+if (readingExit) {
+  readingExit.addEventListener('click', exitReadingMode);
+}
+const readingPrev = document.getElementById('readingPrev');
+if (readingPrev) {
+  readingPrev.addEventListener('click', ()=>{ readingIndex=(readingIndex-1+readingList.length)%readingList.length; renderReadingPage(); });
+}
+const readingNext = document.getElementById('readingNext');
+if (readingNext) {
+  readingNext.addEventListener('click', ()=>{ readingIndex=(readingIndex+1)%readingList.length; renderReadingPage(); });
+}
 // Touch/keyboard nav in reading mode
 document.addEventListener('keydown', e => {
-  if (document.getElementById('readingOverlay').classList.contains('hidden')) return;
+  const readingOverlay = document.getElementById('readingOverlay');
+  if (!readingOverlay || readingOverlay.classList.contains('hidden')) return;
   if (e.key==='ArrowLeft'||e.key==='ArrowUp')   { readingIndex=(readingIndex-1+readingList.length)%readingList.length; renderReadingPage(); }
   if (e.key==='ArrowRight'||e.key==='ArrowDown') { readingIndex=(readingIndex+1)%readingList.length; renderReadingPage(); }
   if (e.key==='Escape') exitReadingMode();
 });
 
 /* ── 设置面板 ── */
-document.getElementById('settingsBtn').addEventListener('click', ()=>{
-  refreshStats();
-  refreshTagMgmt();
-  // sync appearance pane state
-  applyThemeSetting(currentThemeSetting);
-  applySourceSetting(randomSource);
-  openModal('settingsOverlay');
-});
-document.getElementById('settingsClose').addEventListener('click', ()=>closeModal('settingsOverlay'));
+const settingsBtn = document.getElementById('settingsBtn');
+if (settingsBtn) {
+  settingsBtn.addEventListener('click', ()=>{
+    refreshStats();
+    refreshTagMgmt();
+    // sync appearance pane state
+    applyThemeSetting(currentThemeSetting);
+    applySourceSetting(randomSource);
+    openModal('settingsOverlay');
+  });
+}
+const settingsClose = document.getElementById('settingsClose');
+if (settingsClose) {
+  settingsClose.addEventListener('click', ()=>closeModal('settingsOverlay'));
+}
 
 // Tabs
 document.querySelectorAll('.settings-tab').forEach(tab => {
