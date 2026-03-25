@@ -177,6 +177,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
   content:'';position:absolute;inset:-1px;border-radius:calc(var(--r-lg) + 1px);
   background:conic-gradient(from -90deg at 50% 50%, var(--c-accent) 0% var(--border-pct), transparent var(--border-pct) 100%);
   -webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);
+  mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);
   -webkit-mask-composite:xor;mask-composite:exclude;
   padding:1.5px;pointer-events:none;z-index:0;
   --border-pct:0%;transition:--border-pct 0s;
@@ -223,7 +224,7 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .card-body{
   font-family:var(--font-serif);font-size:15px;line-height:1.85;color:var(--c-text-1);
   flex:1 1 auto;
-  display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;
+  display:-webkit-box;-webkit-line-clamp:4;line-clamp:4;-webkit-box-orient:vertical;
   overflow:hidden;
   word-break:break-all;overflow-wrap:break-word;
   max-height:calc(15px * 1.85 * 4);
