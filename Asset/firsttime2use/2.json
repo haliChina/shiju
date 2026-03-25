@@ -1,0 +1,22 @@
+[
+  {"id":"g001","content":"我们都是追梦人。","author":"2019年春晚","tags":["大湾区","励志"],"createdAt":1700100001000,"favorite":false,"rating":0},
+  {"id":"g002","content":"改革开放是决定当代中国命运的关键一招。","author":"邓小平","tags":["大湾区","历史"],"createdAt":1700100002000,"favorite":false,"rating":0},
+  {"id":"g003","content":"东方之珠，我的爱人，你的风采是否浪漫依然。","author":"罗大佑《东方之珠》","tags":["香港","文学"],"createdAt":1700100003000,"favorite":false,"rating":0},
+  {"id":"g004","content":"深圳速度，是创新与拼搏的代名词。","author":"深圳精神","tags":["深圳","励志"],"createdAt":1700100004000,"favorite":false,"rating":0},
+  {"id":"g005","content":"澳门，不只是一座赌城，更是东西文化交融的窗口。","author":"文化观察","tags":["澳门","文化"],"createdAt":1700100005000,"favorite":false,"rating":0},
+  {"id":"g006","content":"湾区同心，共创未来。","author":"粤港澳大湾区精神","tags":["大湾区","励志"],"createdAt":1700100006000,"favorite":false,"rating":0},
+  {"id":"g007","content":"香港是我家，狮子山下共创辉煌。","author":"粤语文化","tags":["香港","人生"],"createdAt":1700100007000,"favorite":false,"rating":0},
+  {"id":"g008","content":"敢闯敢试、敢为人先、埋头苦干，是特区精神的核心。","author":"深圳特区精神","tags":["深圳","励志"],"createdAt":1700100008000,"favorite":false,"rating":0},
+  {"id":"g009","content":"大湾区是中国开放程度最高、经济活力最强的区域之一。","author":"政府工作报告","tags":["大湾区","时事"],"createdAt":1700100009000,"favorite":false,"rating":0},
+  {"id":"g010","content":"那些散落在南海边的珍珠，因改革开放而熠熠生辉。","author":"时代评论","tags":["大湾区","历史"],"createdAt":1700100010000,"favorite":false,"rating":0},
+  {"id":"g011","content":"会展之都，金融中心，东方明珠永不落幕。","author":"香港形象","tags":["香港","文化"],"createdAt":1700100011000,"favorite":false,"rating":0},
+  {"id":"g012","content":"小城故事多，充满喜和乐。","author":"邓丽君《小城故事》","tags":["澳门","文学"],"createdAt":1700100012000,"favorite":false,"rating":0},
+  {"id":"g013","content":"科技创新是粤港澳大湾区建设的重要引擎。","author":"新华社评论","tags":["大湾区","科技"],"createdAt":1700100013000,"favorite":false,"rating":0},
+  {"id":"g014","content":"一国两制，是人类政治史上的伟大创举。","author":"历史评述","tags":["香港","历史"],"createdAt":1700100014000,"favorite":false,"rating":0},
+  {"id":"g015","content":"粤港澳三地人文相近、语言相通、血脉相连。","author":"大湾区白皮书","tags":["大湾区","文化"],"createdAt":1700100015000,"favorite":false,"rating":0},
+  {"id":"g016","content":"前海是深港合作的试验田，也是开放创新的前沿阵地。","author":"政策解读","tags":["深圳","大湾区"],"createdAt":1700100016000,"favorite":false,"rating":0},
+  {"id":"g017","content":"维多利亚港的夜色，是香港最迷人的名片。","author":"旅行文学","tags":["香港","自然"],"createdAt":1700100017000,"favorite":false,"rating":0},
+  {"id":"g018","content":"澳门的葡式蛋挞与粤式点心，是东西文明最美好的相遇。","author":"美食文化","tags":["澳门","文化"],"createdAt":1700100018000,"favorite":false,"rating":0},
+  {"id":"g019","content":"深圳，一个由渔村蜕变为国际都市的奇迹。","author":"城市传奇","tags":["深圳","历史"],"createdAt":1700100019000,"favorite":false,"rating":0},
+  {"id":"g020","content":"大湾区的青年，肩负着融合发展、走向世界的历史使命。","author":"青年论坛","tags":["大湾区","励志"],"createdAt":1700100020000,"favorite":false,"rating":0}
+]
