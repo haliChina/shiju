@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>版权声明 - 拾句</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', 'Noto Serif SC', system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, 'Helvetica Neue', Arial, 'Noto Sans', 'Apple Color Emoji', 'Segoe UI Emoji';
+      --c-bg: #f7f4ef;
+      --c-bg-2: #f0ebe4;
+      --c-surface: #fff;
+      --c-surface-1: #fbf9f6;
+      --c-text-1: #1e1a14;
+      --c-text-2: #5c5040;
+      --c-text-3: #9b8c78;
+      --c-border: #e8e1d6;
+      --c-border-2: #f2ece3;
+      --c-accent: #a3722a;
+      --c-accent-2: #c4924a;
+      --c-accent-dim: #926424;
+      --c-accent-bg: #f8eed9;
+      --c-accent-bg-2: #f3e0b7;
+      --c-danger: #cc5555;
+      --c-danger-bg: #ffe7e7;
+      --c-success: #3d8a5b;
+      --c-success-bg: #e6f3ec;
+      --c-hover: #f7f4ef;
+    }
+    body {
+      background: var(--c-bg);
+      color: var(--c-text-1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .container {
+      width: 100%;
+      max-width: 680px;
+      background: var(--c-surface);
+      border: 1px solid var(--c-border);
+      border-radius: 24px;
+      padding: 32px;
+      box-shadow: 0 8px 32px rgba(60,40,10,.06);
+    }
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 28px;
+    }
+    .header h1 {
+      font-size: 24px;
+      font-weight: 600;
+      margin: 0;
+      color: var(--c-text-1);
+    }
+    .back-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--c-text-3);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      border: none;
+      background: transparent;
+    }
+    .back-btn:hover {
+      background: var(--c-hover);
+      color: var(--c-text-2);
+      transform: translateY(-1px);
+    }
+    .copyright-box {
+      background: var(--c-surface-1);
+      border: 1px solid var(--c-border);
+      border-radius: 16px;
+      padding: 24px;
+    }
+    .copyright-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--c-accent);
+      margin-bottom: 16px;
+    }
+    .copyright-content {
+      font-size: 14px;
+      line-height: 1.8;
+      color: var(--c-text-2);
+    }
+    .copyright-content p {
+      margin: 0 0 12px 0;
+    }
+    .footer {
+      margin-top: 24px;
+      padding-top: 20px;
+      border-top: 1px solid var(--c-border);
+      text-align: center;
+      font-size: 12px;
+      color: var(--c-text-3);
+    }
+    .footer a {
+      color: var(--c-accent);
+      text-decoration: none;
+    }
+    @media (max-width: 640px) {
+      body {
+        padding: 12px;
+        align-items: flex-start;
+      }
+      .container {
+        padding: 24px 20px;
+        border-radius: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>版权声明</h1>
+      <button class="back-btn" onclick="location.href='index.html'" title="返回">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 6L6 18M6 6l12 12" transform="rotate(90 12 12)"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="copyright-box">
+      <div class="copyright-title">Copyright Notice</div>
+      <div class="copyright-content">
+        <p><strong>关于托管服务声明</strong></p>
+        <p>本项目的版权<strong>不属于</strong>上海稀宇科技有限公司（MiniMax）。</p>
+        <p>上海稀宇科技有限公司仅提供托管服务，不拥有、不控制、不负责本项目的任何内容。</p>
+        <p>本项目的所有权利归各自所有者所有。</p>
+        <p style="margin-top:16px; padding-top:16px; border-top:1px solid var(--c-border);">
+          <em>关于 shiju.space.minimaxi.com 页脚的说明：</em><br>
+          该域名由上海稀宇科技有限公司提供托管服务，项目本身与上海稀宇科技有限公司无权属关系。
+        </p>
+      </div>
+    </div>
+
+    <div class="footer">
+      <a href="index.html">← 返回拾句主页</a>
+    </div>
+  </div>
+</body>
+</html>
