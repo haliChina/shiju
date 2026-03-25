@@ -5,25 +5,33 @@
  */
 
 /* ── 常量 ── */
-const STORAGE_KEY   = 'shiju_data';
-const THEME_KEY     = 'shiju_theme';
-const BACKUP_PREFIX = 'shiju_backup_';
-const PRESET_TAGS   = ['励志','爱情','人生','自然','友情','哲思','文学','诗词','散文','经典'];
+const STORAGE_KEY       = 'shiju_data';
+const THEME_KEY         = 'shiju_theme';
+const BACKUP_PREFIX     = 'shiju_backup_';
+const PRESET_TAGS       = ['励志','爱情','人生','自然','友情','哲思','文学','诗词','散文','经典'];
+const COLLECTIONS_KEY   = 'shiju_collections';
+const CHECKIN_KEY       = 'shiju_checkins';
+const DAILY_RECOMM_KEY  = 'shiju_daily_recomm';
 
 /* ── 状态 ── */
-let activeTag      = '';
-let searchKeyword  = '';
-let sortState      = 'newest';
-let filterState    = { favorite: false, exact: false, dateFrom: '', dateTo: '' };
-let isBatchMode    = false;
-let selectedIds    = new Set();
-let editingId      = null;
-let selectedTags   = [];
-let detailId       = null;
-let pendingDelete  = null;   // { id, isBatch: bool, ids: [] }
-let readingList    = [];
-let readingIndex   = 0;
-let importFileData = null;
+let activeTag         = '';
+let activeCollection  = '';
+let searchKeyword     = '';
+let sortState         = 'newest';
+let filterState       = { favorite: false, exact: false, dateFrom: '', dateTo: '' };
+let isBatchMode       = false;
+let selectedIds       = new Set();
+let editingId         = null;
+let selectedTags      = [];
+let detailId          = null;
+let pendingDelete     = null;   // { id, isBatch: bool, ids: [] }
+let readingList       = [];
+let readingIndex      = 0;
+let importFileData    = null;
+let noteTargetId      = null;
+let editingCollection = null;
+let shareTargetId     = null;
+let shareStyle        = 'minimal';
 
 const SORT_LABELS = { newest:'最新', oldest:'最早', 'author-asc':'作者↑', 'author-desc':'作者↓', 'rating-desc':'评分↓' };
 
@@ -38,6 +46,24 @@ function saveData(list) {
   } catch (e) {
     console.warn('saveData failed:', e);
   }
+}
+function loadCollections() {
+  try { return JSON.parse(localStorage.getItem(COLLECTIONS_KEY)) || []; } catch { return []; }
+}
+function saveCollections(collections) {
+  try { localStorage.setItem(COLLECTIONS_KEY, JSON.stringify(collections)); } catch (e) { console.warn('saveCollections failed:', e); }
+}
+function loadCheckIns() {
+  try { return JSON.parse(localStorage.getItem(CHECKIN_KEY)) || []; } catch { return []; }
+}
+function saveCheckIns(checkIns) {
+  try { localStorage.setItem(CHECKIN_KEY, JSON.stringify(checkIns)); } catch (e) { console.warn('saveCheckIns failed:', e); }
+}
+function loadDailyRecomm() {
+  try { return JSON.parse(localStorage.getItem(DAILY_RECOMM_KEY)) || null; } catch { return null; }
+}
+function saveDailyRecomm(recomm) {
+  try { localStorage.setItem(DAILY_RECOMM_KEY, JSON.stringify(recomm)); } catch (e) { console.warn('saveDailyRecomm failed:', e); }
 }
 function genId() {
   return Date.now().toString(36) + Math.random().toString(36).slice(2,6);
@@ -118,8 +144,12 @@ function getAllTags(list) {
   const s = new Set(); list.forEach(i => (i.tags||[]).forEach(t => s.add(t))); return [...s].sort();
 }
 function applyFilters(list) {
+  const collections = loadCollections();
+  const activeCol = collections.find(c => c.id === activeCollection);
+  
   return list.filter(item => {
     const matchTag  = !activeTag || (item.tags||[]).includes(activeTag);
+    const matchCol  = !activeCol || (activeCol.items || []).includes(item.id);
     const kw        = searchKeyword.trim().toLowerCase();
     const matchSearch = !kw || (filterState.exact
       ? item.content.toLowerCase()===kw || (item.author||'').toLowerCase()===kw
@@ -134,7 +164,7 @@ function applyFilters(list) {
         if (d > to) matchDate = false;
       }
     }
-    return matchTag && matchSearch && matchFav && matchDate;
+    return matchTag && matchCol && matchSearch && matchFav && matchDate;
   });
 }
 function applySort(list) {
@@ -165,6 +195,17 @@ function refreshTagFilter(list) {
     sel.appendChild(o);
   });
 }
+function refreshCollectionFilter() {
+  const sel = document.getElementById('collectionFilter');
+  const cur = activeCollection;
+  sel.innerHTML = '<option value="">全部文集</option>';
+  loadCollections().forEach(c => {
+    const o = document.createElement('option');
+    o.value = c.id; o.textContent = c.name;
+    if (c.id===cur) o.selected = true;
+    sel.appendChild(o);
+  });
+}
 
 function buildCard(item) {
   const el = document.createElement('div');
@@ -174,6 +215,8 @@ function buildCard(item) {
   const ratingHtml = Array.from({length:5},(_,i)=>
     `<svg class="star ${i<(item.rating||0)?'filled':''}"><use href="#ic-${i<(item.rating||0)?'star-fill':'star'}"/></svg>`
   ).join('');
+  
+  const hasNote = item.note && item.note.trim().length > 0;
 
   el.innerHTML = `
     <div class="card-header">
@@ -183,6 +226,7 @@ function buildCard(item) {
       <button class="card-fav-btn${item.favorite?' is-fav':''}" title="${item.favorite?'取消收藏':'收藏'}" aria-label="${item.favorite?'取消收藏':'收藏'}">
         <svg class="icon"><use href="#ic-${item.favorite?'star-fill':'star'}"/></svg>
       </button>
+      ${hasNote ? '<span class="note-badge" title="有笔记" style="width:8px;height:8px;background:var(--c-accent);border-radius:50%;position:absolute;top:8px;left:8px;"></span>' : ''}
     </div>
     <div class="card-body">${esc(item.content)}</div>
     <div class="card-rating">${ratingHtml}</div>
@@ -190,6 +234,8 @@ function buildCard(item) {
       <span class="card-author">${esc(item.author||'佚名')}</span>
       <div class="card-tags">${tagsHtml(item.tags,true)}</div>
       <div class="card-actions">
+        <button class="card-act-btn" title="笔记" aria-label="笔记"><svg class="icon"><use href="#ic-note"/></svg></button>
+        <button class="card-act-btn" title="分享" aria-label="分享"><svg class="icon"><use href="#ic-share"/></svg></button>
         <button class="card-act-btn" title="编辑" aria-label="编辑"><svg class="icon"><use href="#ic-edit"/></svg></button>
         <button class="card-act-btn act-del" title="删除" aria-label="删除"><svg class="icon"><use href="#ic-trash"/></svg></button>
       </div>
@@ -226,8 +272,12 @@ function buildCard(item) {
     });
   });
 
+  // Note
+  el.querySelectorAll('.card-act-btn')[0].addEventListener('click', e => { e.stopPropagation(); openNoteEditor(item.id); });
+  // Share
+  el.querySelectorAll('.card-act-btn')[1].addEventListener('click', e => { e.stopPropagation(); openShareModal(item.id); });
   // Edit
-  el.querySelectorAll('.card-act-btn')[0].addEventListener('click', e => { e.stopPropagation(); openEditor(item.id); });
+  el.querySelectorAll('.card-act-btn')[2].addEventListener('click', e => { e.stopPropagation(); openEditor(item.id); });
   // Delete
   el.querySelector('.act-del').addEventListener('click', e => { e.stopPropagation(); openDeleteConfirm(item.id); });
 
@@ -241,6 +291,7 @@ function renderCards() {
 
   document.getElementById('totalCount').textContent = list.length;
   refreshTagFilter(list);
+  refreshCollectionFilter();
 
   const grid = document.getElementById('cardsGrid');
   const emptyEl = document.getElementById('emptyState');
@@ -289,33 +340,46 @@ searchClear.addEventListener('click', () => {
   searchInput.focus(); renderCards();
 });
 document.getElementById('tagFilter').addEventListener('change', e => { activeTag = e.target.value; renderCards(); });
+document.getElementById('collectionFilter').addEventListener('change', e => { activeCollection = e.target.value; renderCards(); });
 
 /* ── 排序 ── */
 const sortDropdown = document.getElementById('sortDropdown');
-document.getElementById('sortBtn').addEventListener('click', e => {
-  e.stopPropagation(); sortDropdown.classList.toggle('open');
-});
+const sortBtn = document.getElementById('sortBtn');
+if (sortBtn) {
+  sortBtn.addEventListener('click', e => {
+    e.stopPropagation(); sortDropdown.classList.toggle('open');
+  });
+}
 document.querySelectorAll('.sort-opt').forEach(btn => {
   btn.addEventListener('click', () => {
     sortState = btn.dataset.sort;
-    document.getElementById('sortLabel').textContent = SORT_LABELS[sortState]||'排序';
+    const sortLabel = document.getElementById('sortLabel');
+    const moreSortLabel = document.getElementById('moreSortLabel');
+    if (sortLabel) sortLabel.textContent = SORT_LABELS[sortState]||'排序';
+    if (moreSortLabel) moreSortLabel.textContent = SORT_LABELS[sortState]||'最新';
     document.querySelectorAll('.sort-opt').forEach(b=>b.classList.remove('active'));
     btn.classList.add('active');
-    sortDropdown.classList.remove('open');
+    if (sortDropdown) sortDropdown.classList.remove('open');
     renderCards();
   });
 });
 document.addEventListener('click', e => {
-  if (!e.target.closest('.sort-wrap')) sortDropdown.classList.remove('open');
+  if (sortDropdown && !e.target.closest('.sort-wrap')) sortDropdown.classList.remove('open');
 });
 
 /* ── 高级筛选面板 ── */
 const advPanel = document.getElementById('advFilterPanel');
-document.getElementById('filterAdvBtn').addEventListener('click', () => advPanel.classList.toggle('open'));
+const filterAdvBtn = document.getElementById('filterAdvBtn');
+if (filterAdvBtn) {
+  filterAdvBtn.addEventListener('click', () => advPanel.classList.toggle('open'));
+}
 
 function updateFilterBadge() {
   const active = filterState.favorite||filterState.exact||filterState.dateFrom||filterState.dateTo;
-  document.getElementById('filterBadge').style.display = active ? 'block' : 'none';
+  const filterBadge = document.getElementById('filterBadge');
+  const moreFilterBadge = document.getElementById('moreFilterBadge');
+  if (filterBadge) filterBadge.style.display = active ? 'block' : 'none';
+  if (moreFilterBadge) moreFilterBadge.style.display = active ? 'inline-flex' : 'none';
 }
 document.getElementById('filterFavorite').addEventListener('change', e => { filterState.favorite=e.target.checked; updateFilterBadge(); renderCards(); });
 document.getElementById('filterExact').addEventListener('change', e => { filterState.exact=e.target.checked; updateFilterBadge(); renderCards(); });
@@ -333,65 +397,98 @@ document.getElementById('filterResetBtn').addEventListener('click', () => {
 /* ── 批量操作 ── */
 function updateBatchBar() {
   const bar = document.getElementById('batchBar');
-  document.getElementById('batchCount').textContent = `已选 ${selectedIds.size} 项`;
-  if (selectedIds.size > 0) bar.classList.remove('hidden');
+  const batchCount = document.getElementById('batchCount');
+  if (bar && batchCount) {
+    batchCount.textContent = `已选 ${selectedIds.size} 项`;
+    if (selectedIds.size > 0) bar.classList.remove('hidden');
+  }
 }
 
-document.getElementById('batchModeBtn').addEventListener('click', () => {
-  isBatchMode = !isBatchMode;
-  selectedIds.clear();
-  if (!isBatchMode) {
-    document.getElementById('batchBar').classList.add('hidden');
-    document.getElementById('cardsGrid').classList.remove('batch-mode');
-  } else {
-    showToast('已进入批量选择模式', 'info');
-  }
-  renderCards();
-});
-document.getElementById('exitBatchBtn').addEventListener('click', () => {
-  isBatchMode = false; selectedIds.clear();
-  document.getElementById('batchBar').classList.add('hidden');
-  document.getElementById('cardsGrid').classList.remove('batch-mode');
-  renderCards();
-});
-document.getElementById('selectAllBtn').addEventListener('click', () => {
-  const allIds = applySort(applyFilters(loadData())).map(i=>i.id);
-  if (selectedIds.size === allIds.length) {
+const batchModeBtn = document.getElementById('batchModeBtn');
+if (batchModeBtn) {
+  batchModeBtn.addEventListener('click', () => {
+    isBatchMode = !isBatchMode;
     selectedIds.clear();
-  } else {
-    allIds.forEach(id => selectedIds.add(id));
-  }
-  updateBatchBar();
-  renderCards();
-});
-document.getElementById('batchDeleteBtn').addEventListener('click', () => {
-  if (!selectedIds.size) return;
-  pendingDelete = { isBatch:true, ids:[...selectedIds] };
-  document.getElementById('deleteModalTitle').textContent = '批量删除';
-  document.getElementById('deleteMsg').textContent = `确定要删除选中的 ${selectedIds.size} 条好句吗？此操作无法恢复。`;
-  openModal('deleteOverlay');
-});
-document.getElementById('batchExportBtn').addEventListener('click', () => {
-  const list = loadData().filter(i => selectedIds.has(i.id));
-  downloadJSON(list, `拾句_选中_${fmtDate(Date.now())}.json`);
-  showToast(`已导出 ${list.length} 条`, 'success');
-});
+    const bar = document.getElementById('batchBar');
+    const cardsGrid = document.getElementById('cardsGrid');
+    if (!isBatchMode) {
+      if (bar) bar.classList.add('hidden');
+      if (cardsGrid) cardsGrid.classList.remove('batch-mode');
+    } else {
+      showToast('已进入批量选择模式', 'info');
+    }
+    renderCards();
+  });
+}
+const exitBatchBtn = document.getElementById('exitBatchBtn');
+if (exitBatchBtn) {
+  exitBatchBtn.addEventListener('click', () => {
+    isBatchMode = false; selectedIds.clear();
+    const bar = document.getElementById('batchBar');
+    const cardsGrid = document.getElementById('cardsGrid');
+    if (bar) bar.classList.add('hidden');
+    if (cardsGrid) cardsGrid.classList.remove('batch-mode');
+    renderCards();
+  });
+}
+const selectAllBtn = document.getElementById('selectAllBtn');
+if (selectAllBtn) {
+  selectAllBtn.addEventListener('click', () => {
+    const allIds = applySort(applyFilters(loadData())).map(i=>i.id);
+    if (selectedIds.size === allIds.length) {
+      selectedIds.clear();
+    } else {
+      allIds.forEach(id => selectedIds.add(id));
+    }
+    updateBatchBar();
+    renderCards();
+  });
+}
+const batchDeleteBtn = document.getElementById('batchDeleteBtn');
+if (batchDeleteBtn) {
+  batchDeleteBtn.addEventListener('click', () => {
+    if (!selectedIds.size) return;
+    pendingDelete = { isBatch:true, ids:[...selectedIds] };
+    const deleteModalTitle = document.getElementById('deleteModalTitle');
+    const deleteMsg = document.getElementById('deleteMsg');
+    if (deleteModalTitle) deleteModalTitle.textContent = '批量删除';
+    if (deleteMsg) deleteMsg.textContent = `确定要删除选中的 ${selectedIds.size} 条好句吗？此操作无法恢复。`;
+    openModal('deleteOverlay');
+  });
+}
+const batchExportBtn = document.getElementById('batchExportBtn');
+if (batchExportBtn) {
+  batchExportBtn.addEventListener('click', () => {
+    const list = loadData().filter(i => selectedIds.has(i.id));
+    downloadJSON(list, `拾句_选中_${fmtDate(Date.now())}.json`);
+    showToast(`已导出 ${list.length} 条`, 'success');
+  });
+}
 
 /* ── 弹窗管理 ── */
 function openModal(id) {
-  document.getElementById(id).classList.add('active');
-  document.body.style.overflow = 'hidden';
+  const el = document.getElementById(id);
+  if (el) {
+    el.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
 }
 function closeModal(id) {
-  document.getElementById(id).classList.remove('active');
-  if (!document.querySelector('.modal-overlay.active')) document.body.style.overflow = '';
+  const el = document.getElementById(id);
+  if (el) {
+    el.classList.remove('active');
+    if (!document.querySelector('.modal-overlay.active')) document.body.style.overflow = '';
+  }
 }
-['editOverlay','detailOverlay','randomOverlay','deleteOverlay','settingsOverlay'].forEach(id => {
-  document.getElementById(id).addEventListener('click', e => { if(e.target.id===id) closeModal(id); });
+['editOverlay','detailOverlay','randomOverlay','deleteOverlay','settingsOverlay','noteOverlay','collectionEditOverlay','dailyOverlay','checkInHistoryOverlay','shareOverlay','linksOverlay','legalOverlay'].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) {
+    el.addEventListener('click', e => { if(e.target.id===id) closeModal(id); });
+  }
 });
 document.addEventListener('keydown', e => {
   if (e.key!=='Escape') return;
-  const order = ['deleteOverlay','editOverlay','randomOverlay','detailOverlay','settingsOverlay'];
+  const order = ['deleteOverlay','editOverlay','noteOverlay','collectionEditOverlay','checkInHistoryOverlay','shareOverlay','legalOverlay','linksOverlay','dailyOverlay','randomOverlay','detailOverlay','settingsOverlay'];
   for (const id of order) {
     if (document.getElementById(id).classList.contains('active')) { closeModal(id); break; }
   }
@@ -528,6 +625,11 @@ function openDetail(id) {
   document.getElementById('detailDate').textContent   = item.createdAt ? `收集于 ${fmtDate(item.createdAt)}` : '';
   document.getElementById('detailTags').innerHTML     = tagsHtml(item.tags||[]);
   refreshDetailFavBtn(!!item.favorite);
+  
+  // Update note button
+  const hasNote = item.note && item.note.trim().length > 0;
+  document.getElementById('detailNoteText').textContent = hasNote ? '编辑笔记' : '笔记';
+  
   buildRatingStars('detailRating', item.rating||0, id);
   openModal('detailOverlay');
 }
@@ -535,6 +637,9 @@ document.getElementById('detailClose').addEventListener('click', ()=>closeModal(
 document.getElementById('detailEdit').addEventListener('click', ()=>{ closeModal('detailOverlay'); openEditor(detailId); });
 document.getElementById('detailDelete').addEventListener('click', ()=>{ closeModal('detailOverlay'); openDeleteConfirm(detailId); });
 document.getElementById('detailFavorite').addEventListener('click', ()=>toggleFavorite(detailId));
+document.getElementById('detailNote').addEventListener('click', ()=>openNoteEditor(detailId));
+document.getElementById('detailCollection').addEventListener('click', ()=>openCollectionSelector(detailId));
+document.getElementById('detailShare').addEventListener('click', ()=>openShareModal(detailId));
 
 /* ── 删除确认 ── */
 function openDeleteConfirm(id) {
@@ -1186,3 +1291,569 @@ if (isFirstTime()) {
     document.body.style.overflow = 'hidden';
   }, 420);
 }
+
+/* ════════════════════════════════════════════════
+   新增功能：笔记、文集、每日打卡、分享卡片
+   ════════════════════════════════════════════════ */
+
+/* ── 笔记功能 ── */
+function openNoteEditor(id) {
+  noteTargetId = id;
+  const item = loadData().find(x => x.id === id);
+  if (!item) return;
+  
+  const noteInput = document.getElementById('noteInput');
+  noteInput.value = item.note || '';
+  document.getElementById('noteCharCount').textContent = `${noteInput.value.length} / 500`;
+  
+  openModal('noteOverlay');
+  setTimeout(() => noteInput.focus(), 80);
+}
+function saveNote() {
+  const noteInput = document.getElementById('noteInput');
+  if (noteInput.value.length > 500) {
+    showToast('笔记长度不能超过500字', 'error');
+    return;
+  }
+  
+  const list = loadData();
+  const item = list.find(x => x.id === noteTargetId);
+  if (!item) return;
+  
+  item.note = noteInput.value;
+  saveData(list);
+  
+  closeModal('noteOverlay');
+  renderCards();
+  
+  if (detailId === noteTargetId) openDetail(detailId);
+  showToast('笔记已保存', 'success');
+}
+document.getElementById('noteInput').addEventListener('input', () => {
+  document.getElementById('noteCharCount').textContent = `${document.getElementById('noteInput').value.length} / 500`;
+});
+document.getElementById('noteSave').addEventListener('click', saveNote);
+document.getElementById('noteCancel').addEventListener('click', () => closeModal('noteOverlay'));
+document.getElementById('noteClose').addEventListener('click', () => closeModal('noteOverlay'));
+
+/* ── 文集功能 ── */
+function refreshCollectionMgmt() {
+  const collections = loadCollections();
+  const list = loadData();
+  const mgmtList = document.getElementById('collectionMgmtList');
+  mgmtList.innerHTML = '';
+  
+  if (!collections.length) {
+    mgmtList.innerHTML = '<div style="font-size:12.5px;color:var(--c-text-4);padding:4px">暂未创建文集</div>';
+    return;
+  }
+  
+  collections.forEach(c => {
+    const itemCount = (c.items || []).length;
+    const row = document.createElement('div');
+    row.className = 'tag-mgmt-item';
+    row.innerHTML = `
+      <div style="flex:1;">
+        <div style="font-weight:500;color:var(--c-text-1);">${esc(c.name)}</div>
+        <div style="font-size:11.5px;color:var(--c-text-3);">${esc(c.desc || '')}${c.desc ? ' · ' : ''}${itemCount} 条</div>
+      </div>
+      <button class="tag-mgmt-rename" title="编辑" aria-label="编辑"><svg class="icon"><use href="#ic-pencil"/></svg></button>
+      <button class="tag-mgmt-del" title="删除" aria-label="删除"><svg class="icon"><use href="#ic-trash"/></svg></button>
+    `;
+    row.querySelector('.tag-mgmt-rename').addEventListener('click', () => openCollectionEditor(c.id));
+    row.querySelector('.tag-mgmt-del').addEventListener('click', () => deleteCollection(c.id));
+    mgmtList.appendChild(row);
+  });
+}
+function openCollectionEditor(id = null) {
+  editingCollection = id;
+  const collections = loadCollections();
+  
+  if (id) {
+    const col = collections.find(c => c.id === id);
+    if (col) {
+      document.getElementById('collectionEditTitle').textContent = '编辑文集';
+      document.getElementById('collectionNameInput').value = col.name;
+      document.getElementById('collectionDescInput').value = col.desc || '';
+    }
+  } else {
+    document.getElementById('collectionEditTitle').textContent = '创建文集';
+    document.getElementById('collectionNameInput').value = '';
+    document.getElementById('collectionDescInput').value = '';
+  }
+  
+  openModal('collectionEditOverlay');
+  setTimeout(() => document.getElementById('collectionNameInput').focus(), 80);
+}
+function saveCollection() {
+  const name = document.getElementById('collectionNameInput').value.trim();
+  const desc = document.getElementById('collectionDescInput').value.trim();
+  
+  if (!name) {
+    showToast('文集名称不能为空', 'error');
+    return;
+  }
+  
+  const collections = loadCollections();
+  
+  if (collections.some(c => c.name === name && c.id !== editingCollection)) {
+    showToast('文集名称已存在', 'error');
+    return;
+  }
+  
+  if (editingCollection) {
+    const idx = collections.findIndex(c => c.id === editingCollection);
+    if (idx !== -1) {
+      collections[idx].name = name;
+      collections[idx].desc = desc;
+    }
+  } else {
+    collections.push({ id: genId(), name, desc, items: [], createdAt: Date.now() });
+  }
+  
+  saveCollections(collections);
+  closeModal('collectionEditOverlay');
+  refreshCollectionMgmt();
+  refreshCollectionFilter();
+  renderCards();
+  showToast(editingCollection ? '文集已更新' : '文集已创建', 'success');
+}
+function deleteCollection(id) {
+  if (!confirm('确定删除这个文集？文集内的句子不会被删除。')) return;
+  
+  const collections = loadCollections().filter(c => c.id !== id);
+  saveCollections(collections);
+  
+  if (activeCollection === id) activeCollection = '';
+  refreshCollectionMgmt();
+  refreshCollectionFilter();
+  renderCards();
+  showToast('文集已删除', 'info');
+}
+function openCollectionSelector(itemId) {
+  const collections = loadCollections();
+  const list = loadData();
+  const item = list.find(x => x.id === itemId);
+  if (!item) return;
+  
+  const overlayId = 'collectionSelectOverlay';
+  
+  let overlay = document.getElementById(overlayId);
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = overlayId;
+    overlay.className = 'modal-overlay';
+    overlay.innerHTML = `
+      <div class="modal" style="max-width:420px;">
+        <div class="modal-header">
+          <h2 class="modal-title">添加到文集</h2>
+          <button class="modal-close" onclick="closeModal('${overlayId}')"><svg class="icon"><use href="#ic-x"/></svg></button>
+        </div>
+        <div class="modal-body" id="collectionSelectBody"></div>
+        <div class="modal-footer">
+          <button class="btn btn-ghost" onclick="closeModal('${overlayId}')">取消</button>
+          <button class="btn btn-primary" id="collectionSelectCreate"><svg class="icon"><use href="#ic-plus"/></svg>创建文集</button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+    
+    overlay.addEventListener('click', e => { if(e.target.id === overlayId) closeModal(overlayId); });
+  }
+  
+  const body = document.getElementById('collectionSelectBody');
+  body.innerHTML = '';
+  
+  if (!collections.length) {
+    body.innerHTML = '<div style="text-align:center;padding:20px;color:var(--c-text-3);font-size:13px;">暂未创建文集</div>';
+  } else {
+    collections.forEach(c => {
+      const isIn = (c.items || []).includes(itemId);
+      const item = document.createElement('label');
+      item.className = 'adv-filter-item';
+      item.style.marginBottom = '8px';
+      item.innerHTML = `<input type="checkbox" ${isIn ? 'checked' : ''}><span>${esc(c.name)}</span><span style="margin-left:auto;font-size:12px;color:var(--c-text-3);">${(c.items||[]).length} 条</span>`;
+      item.querySelector('input').addEventListener('change', e => {
+        toggleItemInCollection(c.id, itemId, e.target.checked);
+      });
+      body.appendChild(item);
+    });
+  }
+  
+  document.getElementById('collectionSelectCreate').onclick = () => {
+    closeModal(overlayId);
+    openCollectionEditor();
+  };
+  
+  openModal(overlayId);
+}
+function toggleItemInCollection(colId, itemId, add) {
+  const collections = loadCollections();
+  const col = collections.find(c => c.id === colId);
+  if (!col) return;
+  
+  if (!col.items) col.items = [];
+  
+  if (add) {
+    if (!col.items.includes(itemId)) col.items.push(itemId);
+  } else {
+    col.items = col.items.filter(id => id !== itemId);
+  }
+  
+  saveCollections(collections);
+  renderCards();
+}
+document.getElementById('addCollectionBtn').addEventListener('click', () => openCollectionEditor());
+document.getElementById('collectionEditSave').addEventListener('click', saveCollection);
+document.getElementById('collectionEditCancel').addEventListener('click', () => closeModal('collectionEditOverlay'));
+document.getElementById('collectionEditClose').addEventListener('click', () => closeModal('collectionEditOverlay'));
+
+/* ── 设置面板标签页更新 ── */
+const origTabClick = document.querySelectorAll('.settings-tab')[0]?.onclick;
+document.querySelectorAll('.settings-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    if (tab.dataset.tab === 'collections') refreshCollectionMgmt();
+  });
+});
+
+/* ── 每日推荐/打卡功能 ── */
+function getTodayStr() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+function getDailyRecommendation() {
+  const today = getTodayStr();
+  const saved = loadDailyRecomm();
+  
+  if (saved && saved.date === today) {
+    const list = loadData();
+    return list.find(x => x.id === saved.itemId);
+  }
+  
+  const list = loadData();
+  if (!list.length) return null;
+  
+  const checkIns = loadCheckIns();
+  const checkedIds = new Set(checkIns.map(c => c.itemId));
+  
+  let candidates = list.filter(x => !checkedIds.has(x.id));
+  if (!candidates.length) candidates = list;
+  
+  candidates.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+  
+  const topCount = Math.min(10, candidates.length);
+  const selected = candidates[Math.floor(Math.random() * topCount)];
+  
+  saveDailyRecomm({ date: today, itemId: selected.id });
+  return selected;
+}
+function hasCheckedInToday() {
+  const checkIns = loadCheckIns();
+  const today = getTodayStr();
+  return checkIns.some(c => c.date === today);
+}
+function checkIn(itemId) {
+  const checkIns = loadCheckIns();
+  const today = getTodayStr();
+  
+  if (checkIns.some(c => c.date === today)) {
+    showToast('今天已经打卡了哦', 'info');
+    return;
+  }
+  
+  checkIns.push({ id: genId(), date: today, itemId, checkedAt: Date.now() });
+  saveCheckIns(checkIns);
+  showToast('打卡成功！', 'success');
+  closeModal('dailyOverlay');
+}
+function openDailyModal() {
+  const item = getDailyRecommendation();
+  if (!item) {
+    showToast('还没有收藏任何句子', 'info');
+    return;
+  }
+  
+  document.getElementById('dailyContent').innerHTML = esc(item.content);
+  document.getElementById('dailyAuthor').textContent = item.author || '佚名';
+  document.getElementById('dailyTags').innerHTML = tagsHtml(item.tags || []);
+  
+  const checkInBtn = document.getElementById('dailyCheckIn');
+  if (hasCheckedInToday()) {
+    checkInBtn.disabled = true;
+    checkInBtn.innerHTML = '<svg class="icon"><use href="#ic-check-circle"/></svg>今日已打卡';
+  } else {
+    checkInBtn.disabled = false;
+    checkInBtn.innerHTML = '<svg class="icon"><use href="#ic-check"/></svg>完成打卡';
+  }
+  
+  openModal('dailyOverlay');
+}
+function showCheckInHistory() {
+  closeModal('dailyOverlay');
+  
+  const checkIns = loadCheckIns().sort((a, b) => (b.checkedAt || 0) - (a.checkedAt || 0));
+  const list = loadData();
+  const historyList = document.getElementById('checkInHistoryList');
+  historyList.innerHTML = '';
+  
+  if (!checkIns.length) {
+    historyList.innerHTML = '<div style="font-size:12.5px;color:var(--c-text-4);padding:20px;text-align:center;">暂无打卡记录</div>';
+  } else {
+    checkIns.forEach(c => {
+      const item = list.find(x => x.id === c.itemId);
+      const row = document.createElement('div');
+      row.className = 'tag-mgmt-item';
+      row.style.cursor = 'pointer';
+      row.innerHTML = `
+        <div style="flex:1;min-width:0;">
+          <div style="font-weight:500;color:var(--c-text-1);margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${esc(item?.content?.slice(0, 40) || '')}${item?.content?.length > 40 ? '…' : ''}</div>
+          <div style="font-size:11.5px;color:var(--c-text-3);">${esc(c.date)} · ${esc(item?.author || '佚名')}</div>
+        </div>
+        <svg class="icon" style="width:16px;height:16px;color:var(--c-text-4);flex-shrink:0;"><use href="#ic-chevron-right"/></svg>
+      `;
+      row.addEventListener('click', () => {
+        if (item) {
+          closeModal('checkInHistoryOverlay');
+          openDetail(item.id);
+        }
+      });
+      historyList.appendChild(row);
+    });
+  }
+  
+  openModal('checkInHistoryOverlay');
+}
+document.getElementById('dailyBtn').addEventListener('click', openDailyModal);
+document.getElementById('dailyClose').addEventListener('click', () => closeModal('dailyOverlay'));
+document.getElementById('dailySkip').addEventListener('click', () => closeModal('dailyOverlay'));
+document.getElementById('dailyCheckIn').addEventListener('click', () => {
+  const saved = loadDailyRecomm();
+  if (saved && saved.itemId) checkIn(saved.itemId);
+});
+document.getElementById('viewHistoryBtn').addEventListener('click', showCheckInHistory);
+document.getElementById('checkInHistoryClose').addEventListener('click', () => closeModal('checkInHistoryOverlay'));
+
+/* ── 分享功能 ── */
+function openShareModal(id) {
+  shareTargetId = id;
+  shareStyle = 'minimal';
+  
+  const list = loadData();
+  const item = list.find(x => x.id === id);
+  if (!item) return;
+  
+  document.querySelectorAll('.share-style-btn').forEach(btn => {
+    btn.classList.remove('active');
+    if (btn.dataset.style === shareStyle) btn.classList.add('active');
+  });
+  
+  renderShareCardPreview(item, shareStyle);
+  openModal('shareOverlay');
+}
+function renderShareCardPreview(item, style) {
+  const container = document.getElementById('shareCardPreview');
+  const html = buildShareCardHTML(item, style);
+  container.innerHTML = html;
+}
+function buildShareCardHTML(item, style) {
+  const colors = {
+    minimal: { bg: '#ffffff', border: '#e8e1d6', text: '#1e1a14', accent: '#a3722a', subtext: '#9b8c78' },
+    elegant: { bg: '#f7f4ef', border: '#c4924a', text: '#1e1a14', accent: '#a3722a', subtext: '#5c5040' },
+    warm: { bg: '#fdf5ea', border: '#d4922a', text: '#1e1a14', accent: '#a3722a', subtext: '#a3722a' }
+  };
+  const c = colors[style] || colors.minimal;
+  
+  return `
+    <div style="
+      width:360px;
+      padding:32px 28px;
+      background:${c.bg};
+      border:2px solid ${c.border};
+      border-radius:16px;
+      font-family:'Noto Serif SC','Songti SC',Georgia,serif;
+      text-align:center;
+      box-shadow:0 8px 32px rgba(60,40,10,.12);
+    ">
+      <div style="
+        font-size:12px;
+        letter-spacing:.2em;
+        color:${c.subtext};
+        margin-bottom:16px;
+        text-transform:uppercase;
+      ">拾 句</div>
+      <div style="
+        font-size:18px;
+        line-height:1.8;
+        color:${c.text};
+        margin-bottom:20px;
+        letter-spacing:.02em;
+      ">${esc(item.content)}</div>
+      <div style="
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        gap:12px;
+      ">
+        <div style="width:40px;height:1px;background:${c.accent};opacity:.4;"></div>
+        <div style="
+          font-size:13px;
+          color:${c.accent};
+          font-style:italic;
+        ">—— ${esc(item.author || '佚名')}</div>
+        <div style="width:40px;height:1px;background:${c.accent};opacity:.4;"></div>
+      </div>
+      <div style="
+        margin-top:20px;
+        padding-top:16px;
+        border-top:1px solid ${c.border};
+        font-size:11px;
+        color:${c.subtext};
+        letter-spacing:.08em;
+      ">由「拾句」生成</div>
+    </div>
+  `;
+}
+async function downloadShareCard() {
+  const list = loadData();
+  const item = list.find(x => x.id === shareTargetId);
+  if (!item) return;
+  
+  await loadPdfLibs();
+  if (!window.html2canvas) {
+    showToast('图片库加载失败，请检查网络后重试', 'error');
+    return;
+  }
+  
+  showToast('正在生成图片…', 'info', 5000);
+  
+  const renderContainer = document.getElementById('shareCardRenderContainer');
+  if (!renderContainer) return;
+  renderContainer.innerHTML = buildShareCardHTML(item, shareStyle);
+  const cardEl = renderContainer.firstElementChild;
+  if (!cardEl) return;
+  
+  try {
+    const canvas = await html2canvas(cardEl, {
+      scale: 2,
+      backgroundColor: null,
+      logging: false,
+      useCORS: true
+    });
+    
+    const a = document.createElement('a');
+    a.href = canvas.toDataURL('image/png');
+    a.download = `拾句_${fmtDate(Date.now())}.png`;
+    a.click();
+    
+    showToast('分享卡片已下载', 'success');
+  } catch (e) {
+    console.error(e);
+    showToast('生成失败，请重试', 'error');
+  }
+}
+function copyShareText() {
+  const list = loadData();
+  const item = list.find(x => x.id === shareTargetId);
+  if (!item) return;
+  
+  const text = `${item.content}\n\n—— ${item.author || '佚名'}`;
+  navigator.clipboard.writeText(text).then(() => {
+    showToast('已复制到剪贴板', 'success');
+  }).catch(() => {
+    showToast('复制失败', 'error');
+  });
+}
+document.querySelectorAll('.share-style-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const list = loadData();
+    const item = list.find(x => x.id === shareTargetId);
+    if (!item) return;
+    
+    shareStyle = btn.dataset.style;
+    document.querySelectorAll('.share-style-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderShareCardPreview(item, shareStyle);
+  });
+});
+document.getElementById('shareClose').addEventListener('click', () => closeModal('shareOverlay'));
+document.getElementById('shareDownload').addEventListener('click', downloadShareCard);
+document.getElementById('shareCopyText').addEventListener('click', copyShareText);
+
+/* More Menu Logic */
+function toggleMoreMenu() {
+  const menu = document.getElementById('moreMenu');
+  menu.classList.toggle('active');
+}
+function closeMoreMenu() {
+  const menu = document.getElementById('moreMenu');
+  menu.classList.remove('active');
+}
+document.getElementById('moreMenuBtn').addEventListener('click', (e) => {
+  e.stopPropagation();
+  toggleMoreMenu();
+});
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.more-menu-wrap')) {
+    closeMoreMenu();
+  }
+});
+document.getElementById('moreSortBtn').addEventListener('click', () => {
+  closeMoreMenu();
+  document.getElementById('sortBtn').click();
+});
+document.getElementById('moreFilterAdvBtn').addEventListener('click', () => {
+  closeMoreMenu();
+  const panel = document.getElementById('advFilterPanel');
+  panel.classList.toggle('open');
+});
+document.getElementById('moreBatchBtn').addEventListener('click', () => {
+  closeMoreMenu();
+  toggleBatchMode();
+});
+document.getElementById('moreSettingsBtn').addEventListener('click', () => {
+  closeMoreMenu();
+  openSettings();
+});
+function updateMoreMenuSortLabel() {
+  const moreSortLabel = document.getElementById('moreSortLabel');
+  if (moreSortLabel) {
+    moreSortLabel.textContent = SORT_LABELS[sortState] || '最新';
+  }
+}
+document.querySelectorAll('.sort-opt').forEach(opt => {
+  opt.addEventListener('click', () => {
+    setTimeout(updateMoreMenuSortLabel, 0);
+  });
+});
+updateMoreMenuSortLabel();
+function syncFilterBadge() {
+  const originalBadge = document.getElementById('filterBadge');
+  const moreBadge = document.getElementById('moreFilterBadge');
+  if (originalBadge && moreBadge) {
+    moreBadge.textContent = originalBadge.textContent;
+    moreBadge.style.display = originalBadge.style.display;
+  }
+}
+const observer = new MutationObserver(syncFilterBadge);
+const originalBadge = document.getElementById('filterBadge');
+if (originalBadge) {
+  observer.observe(originalBadge, { attributes: true, childList: true });
+}
+
+/* Links & Legal Modals */
+document.getElementById('navBadgeBtn').addEventListener('click', () => {
+  openModal('linksOverlay');
+});
+document.getElementById('linksClose').addEventListener('click', () => {
+  closeModal('linksOverlay');
+});
+document.getElementById('openLegalBtn').addEventListener('click', () => {
+  closeModal('linksOverlay');
+  openModal('legalOverlay');
+});
+document.getElementById('legalClose').addEventListener('click', () => {
+  closeModal('legalOverlay');
+});
+['linksOverlay','legalOverlay'].forEach(id => {
+  document.getElementById(id).addEventListener('click', e => { if(e.target.id===id) closeModal(id); });
+});

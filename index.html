@@ -51,6 +51,13 @@
   <symbol id="ic-pack-bay" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18h18"/><path d="M3 18V9l9-5 9 5v9"/><path d="M9 18v-6h6v6"/><line x1="12" y1="4" x2="12" y2="2"/><line x1="6" y1="9" x2="6" y2="7"/><line x1="18" y1="9" x2="18" y2="7"/></symbol>
   <symbol id="ic-pack-media" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/><circle cx="12" cy="11" r="3"/><polyline points="10.5 10 12 8.5 13.5 10"/></symbol>
   <symbol id="ic-check-circle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></symbol>
+  <symbol id="ic-note" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></symbol>
+  <symbol id="ic-folder" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></symbol>
+  <symbol id="ic-share" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></symbol>
+  <symbol id="ic-calendar-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><polyline points="9 16 12 19 22 9"/></symbol>
+  <symbol id="ic-image" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></symbol>
+  <symbol id="ic-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></symbol>
+  <symbol id="ic-more-horizontal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></symbol>
   <symbol id="ic-logo" viewBox="18 12 430 374">
     <path fill="currentColor" d="M259.67,213.87c0-117.21,112.6-186.38,184.66-198.87v69.17c-39.41,10.57-86.7,64.37-88.95,122.98h88.95v72.91c0,56.3-52.6,101.94-117.5,101.94h-67.16V213.87z M21.34,213.87C21.34,96.66,133.94,27.49,206,15v69.17c-39.41,10.57-86.7,64.37-88.95,122.98h87.82v72.91c0,56.3-52.6,101.94-117.5,101.94H21.34V213.87z"/>
   </symbol>
@@ -68,6 +75,10 @@
       </div>
     </div>
     <div class="header-right">
+      <button class="nav-badge-btn" id="navBadgeBtn" title="查看重要信息">
+        <span class="nav-badge-dot"></span>
+        <span class="nav-badge-text">公告</span>
+      </button>
       <div class="count-pill"><span id="totalCount">0</span><span class="count-unit">条收藏</span></div>
       <button class="theme-cycle-btn" id="themeBtn" title="切换主题" aria-label="切换主题">
         <svg class="icon theme-cycle-icon" id="themeBtnIcon"><use href="#ic-sun" id="themeBtnUse"/></svg>
@@ -90,7 +101,7 @@
       <select class="filter-select" id="tagFilter"><option value="">全部标签</option></select>
       <svg class="icon filter-suffix-icon"><use href="#ic-chevron-down"/></svg>
     </div>
-    <div class="sort-wrap">
+    <div class="sort-wrap" style="display:none;">
       <button class="btn btn-outline sort-btn" id="sortBtn">
         <svg class="icon"><use href="#ic-sort"/></svg>
         <span id="sortLabel">最新</span>
@@ -104,15 +115,42 @@
         <button class="sort-opt" data-sort="rating-desc">评分从高到低</button>
       </div>
     </div>
-    <button class="btn btn-outline filter-adv-btn" id="filterAdvBtn" title="高级筛选">
+    <button class="btn btn-outline filter-adv-btn" id="filterAdvBtn" title="高级筛选" style="display:none;">
       <svg class="icon"><use href="#ic-filter"/></svg>
       <span class="filter-adv-badge" id="filterBadge" style="display:none"></span>
     </button>
+    <div class="filter-wrap" style="margin-left: 8px;">
+      <svg class="icon filter-prefix-icon"><use href="#ic-folder"/></svg>
+      <select class="filter-select" id="collectionFilter"><option value="">全部文集</option></select>
+      <svg class="icon filter-suffix-icon"><use href="#ic-chevron-down"/></svg>
+    </div>
     <div class="toolbar-right">
+      <button class="btn btn-outline" id="dailyBtn"><svg class="icon"><use href="#ic-calendar-check"/></svg><span>每日打卡</span></button>
       <button class="btn btn-outline" id="randomBtn"><svg class="icon"><use href="#ic-shuffle"/></svg><span>随机一句</span></button>
       <button class="btn btn-outline icon-only" id="readingModeBtn" title="阅读模式"><svg class="icon"><use href="#ic-book-open"/></svg></button>
-      <button class="btn btn-outline icon-only" id="batchModeBtn" title="批量选择"><svg class="icon"><use href="#ic-select"/></svg></button>
-      <button class="btn btn-outline icon-only" id="settingsBtn" title="设置"><svg class="icon"><use href="#ic-settings"/></svg></button>
+      <div class="more-menu-wrap">
+        <button class="btn btn-outline icon-only" id="moreMenuBtn" title="更多"><svg class="icon"><use href="#ic-more-horizontal"/></svg></button>
+        <div class="more-menu" id="moreMenu">
+          <button class="more-menu-item" id="moreSortBtn">
+            <svg class="icon"><use href="#ic-sort"/></svg>
+            <span>排序</span>
+            <span class="more-menu-sub" id="moreSortLabel">最新</span>
+          </button>
+          <button class="more-menu-item" id="moreFilterAdvBtn">
+            <svg class="icon"><use href="#ic-filter"/></svg>
+            <span>高级筛选</span>
+            <span class="filter-adv-badge" id="moreFilterBadge" style="display:none"></span>
+          </button>
+          <button class="more-menu-item" id="moreBatchBtn">
+            <svg class="icon"><use href="#ic-select"/></svg>
+            <span>批量选择</span>
+          </button>
+          <button class="more-menu-item" id="moreSettingsBtn">
+            <svg class="icon"><use href="#ic-settings"/></svg>
+            <span>设置</span>
+          </button>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -148,7 +186,7 @@
       <div class="empty-icon-bg"><svg class="empty-svg"><use href="#ic-book"/></svg></div>
       <h3 class="empty-title">还没有收藏的句子</h3>
       <p class="empty-desc">遇见打动你的文字，就把它收藏起来吧</p>
-      <button class="btn btn-primary" id="emptyAddBtn"><svg class="icon"><use href="#ic-plus"/></svg>添加第一句</button>
+      <button class="btn btn-primary" id="emptyAddBtn"><svg class="icon"><use href="#ic-plus"/></svg></button>
     </div>
     <div class="empty-state" id="noResultState" style="display:none;">
       <div class="empty-icon-bg"><svg class="empty-svg"><use href="#ic-search-x"/></svg></div>
@@ -216,10 +254,82 @@
         <div class="rating-stars" id="detailRating" role="group" aria-label="评分"></div>
       </div>
     </div>
-    <div class="modal-footer">
-      <button class="btn btn-ghost-danger" id="detailDelete"><svg class="icon"><use href="#ic-trash"/></svg>删除</button>
+    <div class="modal-footer" style="flex-wrap:wrap;gap:8px;">
+      <button class="btn btn-ghost-danger" id="detailDelete"><svg class="icon"><use href="#ic-trash"/></svg></button>
+      <button class="btn btn-ghost" id="detailNote"><svg class="icon"><use href="#ic-note"/></svg><span id="detailNoteText">笔记</span></button>
+      <button class="btn btn-ghost" id="detailCollection"><svg class="icon"><use href="#ic-folder"/></svg></button>
+      <button class="btn btn-ghost" id="detailShare"><svg class="icon"><use href="#ic-share"/></svg></button>
       <button class="btn btn-ghost" id="detailFavorite"><svg class="icon" id="detailFavIcon"><use href="#ic-star"/></svg><span id="detailFavText">收藏</span></button>
-      <button class="btn btn-primary" id="detailEdit"><svg class="icon"><use href="#ic-edit"/></svg>编辑</button>
+      <button class="btn btn-primary" id="detailEdit"><svg class="icon"><use href="#ic-edit"/></svg></button>
+    </div>
+  </div>
+</div>
+
+<!-- 链接页面弹窗 -->
+<div class="modal-overlay" id="linksOverlay">
+  <div class="modal modal-sm" role="dialog" aria-modal="true">
+    <div class="modal-header">
+      <h2 class="modal-title">关于拾句</h2>
+      <button class="modal-close" id="linksClose" aria-label="关闭"><svg class="icon"><use href="#ic-x"/></svg></button>
+    </div>
+    <div class="modal-body links-modal-body">
+      <div class="link-group-title">法律声明</div>
+      <button class="link-item" id="openLegalBtn">
+        <span>服务条款 & 隐私政策</span>
+        <svg class="icon"><use href="#ic-chevron-right"/></svg>
+      </button>
+      <div class="link-divider"></div>
+      <div class="link-group-title">网站状态</div>
+      <a class="link-item" href="https://status.userhali.com" target="_blank" rel="noopener noreferrer">
+        <span>网站状态</span>
+        <span class="status-badge"><span class="status-dot"></span>在线</span>
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- 法律页面弹窗 -->
+<div class="modal-overlay" id="legalOverlay">
+  <div class="modal" role="dialog" aria-modal="true">
+    <div class="modal-header">
+      <h2 class="modal-title">法律声明</h2>
+      <button class="modal-close" id="legalClose" aria-label="关闭"><svg class="icon"><use href="#ic-x"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div class="legal-page-scroll">
+        <div class="legal-title">服务条款 & 隐私政策</div>
+        <div class="legal-content">
+          <h3>1. 服务条款</h3>
+          <p>欢迎使用拾句！在使用本服务前，请仔细阅读以下条款：</p>
+          <ul>
+            <li>本应用为免费的个人知识管理工具，所有数据存储在您的浏览器本地</li>
+            <li>您需要对自己存储的数据负责，请定期备份</li>
+            <li>请勿使用本应用存储任何违法或敏感内容</li>
+            <li>我们保留随时修改或终止服务的权利</li>
+          </ul>
+          
+          <h3>2. 隐私政策</h3>
+          <p>我们非常重视您的隐私：</p>
+          <ul>
+            <li>本应用不收集、不发送您的任何个人数据</li>
+            <li>所有内容仅保存在您的浏览器本地</li>
+            <li>我们不会向任何第三方分享您的数据</li>
+            <li>清除浏览器数据将同时清除所有内容</li>
+          </ul>
+          
+          <div class="copyright-notice-box">
+            <div class="notice-title">版权声明</div>
+            <div class="notice-text">
+              <p><strong>关于 shiju.space.minimaxi.com</strong></p>
+              <p>本项目的版权 <strong>不属于</strong> 上海稀宇科技有限公司（MiniMax）。</p>
+              <p>上海稀宇科技有限公司仅提供本项目的托管服务，不拥有、不控制、不负责本项目的任何内容。</p>
+              <p>本项目的所有权利归其各自的所有者所有。</p>
+            </div>
+          </div>
+          
+          <p style="margin-top: 20px; font-size: 12px; color: var(--c-text-3);">最后更新日期：2026年3月</p>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -277,6 +387,7 @@
     <div class="settings-tabs">
       <button class="settings-tab active" data-tab="appear"><svg class="icon icon-sm"><use href="#ic-sun"/></svg>外观</button>
       <button class="settings-tab" data-tab="stats"><svg class="icon icon-sm"><use href="#ic-bar-chart"/></svg>统计</button>
+      <button class="settings-tab" data-tab="collections"><svg class="icon icon-sm"><use href="#ic-folder"/></svg>文集管理</button>
       <button class="settings-tab" data-tab="data"><svg class="icon icon-sm"><use href="#ic-download"/></svg>数据</button>
       <button class="settings-tab" data-tab="tags"><svg class="icon icon-sm"><use href="#ic-tag"/></svg>标签管理</button>
     </div>
@@ -366,6 +477,12 @@
           <button class="btn btn-danger w-full" id="deleteAllBtn"><svg class="icon"><use href="#ic-trash"/></svg>删除所有数据</button>
         </div>
       </div>
+      <div class="settings-pane" id="pane-collections">
+        <div class="data-action-group" style="padding-bottom: 12px;">
+          <button class="btn btn-outline w-full" id="addCollectionBtn"><svg class="icon"><use href="#ic-plus"/></svg>创建文集</button>
+        </div>
+        <div class="tag-mgmt-list" id="collectionMgmtList" style="max-height: 320px;"></div>
+      </div>
       <div class="settings-pane" id="pane-tags">
         <div class="tag-mgmt-list" id="tagMgmtList"></div>
         <div class="tag-merge-section">
@@ -381,6 +498,118 @@
     </div>
   </div>
 </div>
+
+<!-- 笔记编辑弹窗 -->
+<div class="modal-overlay" id="noteOverlay">
+  <div class="modal" role="dialog" aria-modal="true">
+    <div class="modal-header">
+      <h2 class="modal-title">添加笔记</h2>
+      <button class="modal-close" id="noteClose" aria-label="关闭"><svg class="icon"><use href="#ic-x"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">个人笔记</label>
+        <textarea class="form-textarea" id="noteInput" placeholder="记录你的阅读感悟、使用场景或想法…" rows="7" maxlength="500"></textarea>
+        <div class="field-footer"><span class="field-hint">支持换行，最多 500 字</span><span class="char-count" id="noteCharCount">0 / 500</span></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" id="noteCancel">取消</button>
+      <button class="btn btn-primary" id="noteSave">保存笔记</button>
+    </div>
+  </div>
+</div>
+
+<!-- 创建/编辑文集弹窗 -->
+<div class="modal-overlay" id="collectionEditOverlay">
+  <div class="modal modal-sm" role="dialog" aria-modal="true">
+    <div class="modal-header">
+      <h2 class="modal-title" id="collectionEditTitle">创建文集</h2>
+      <button class="modal-close" id="collectionEditClose" aria-label="关闭"><svg class="icon"><use href="#ic-x"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label" for="collectionNameInput">文集名称 <span class="badge-required">必填</span></label>
+        <input type="text" class="form-input" id="collectionNameInput" placeholder="如：读书笔记、作文素材…" maxlength="30" />
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="collectionDescInput">描述（可选）</label>
+        <textarea class="form-textarea" id="collectionDescInput" placeholder="简单描述这个文集的用途…" rows="3" maxlength="100"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" id="collectionEditCancel">取消</button>
+      <button class="btn btn-primary" id="collectionEditSave">保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- 每日打卡弹窗 -->
+<div class="modal-overlay" id="dailyOverlay">
+  <div class="modal modal-random" id="dailyModal" role="dialog" aria-modal="true">
+    <div class="modal-header random-header">
+      <div class="random-title-row">
+        <div class="random-icon-badge"><svg class="icon"><use href="#ic-calendar-check"/></svg></div>
+        <h2 class="modal-title">今日推荐</h2>
+      </div>
+      <button class="modal-close" id="dailyClose" aria-label="关闭"><svg class="icon"><use href="#ic-x"/></svg></button>
+    </div>
+    <div class="modal-body random-body">
+      <div class="random-quote-deco"><svg class="icon-quote-lg"><use href="#ic-quote"/></svg></div>
+      <blockquote class="random-content" id="dailyContent"></blockquote>
+      <p class="random-author" id="dailyAuthor"></p>
+      <div class="random-tags" id="dailyTags"></div>
+      <div style="margin-top:16px;display:flex;gap:8px;justify-content:center;">
+        <button class="btn btn-outline" id="viewHistoryBtn"><svg class="icon"><use href="#ic-calendar"/></svg>打卡历史</button>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" id="dailySkip">跳过</button>
+      <button class="btn btn-primary" id="dailyCheckIn"><svg class="icon"><use href="#ic-check"/></svg>完成打卡</button>
+    </div>
+  </div>
+</div>
+
+<!-- 打卡历史弹窗 -->
+<div class="modal-overlay" id="checkInHistoryOverlay">
+  <div class="modal" role="dialog" aria-modal="true">
+    <div class="modal-header">
+      <h2 class="modal-title">打卡历史</h2>
+      <button class="modal-close" id="checkInHistoryClose" aria-label="关闭"><svg class="icon"><use href="#ic-x"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div class="tag-mgmt-list" id="checkInHistoryList" style="max-height: 400px;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- 分享卡片弹窗 -->
+<div class="modal-overlay" id="shareOverlay">
+  <div class="modal" role="dialog" aria-modal="true" style="max-width: 680px;">
+    <div class="modal-header">
+      <h2 class="modal-title">生成分享卡片</h2>
+      <button class="modal-close" id="shareClose" aria-label="关闭"><svg class="icon"><use href="#ic-x"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div class="appearance-section">
+        <div class="appearance-section-title">选择样式</div>
+        <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px;">
+          <button class="btn btn-outline share-style-btn active" data-style="minimal" style="flex:1;min-width:120px;">简约</button>
+          <button class="btn btn-outline share-style-btn" data-style="elegant" style="flex:1;min-width:120px;">雅致</button>
+          <button class="btn btn-outline share-style-btn" data-style="warm" style="flex:1;min-width:120px;">温暖</button>
+        </div>
+      </div>
+      <div id="shareCardPreview" style="background:var(--c-surface-2);border:1.5px solid var(--c-border);border-radius:var(--r-lg);padding:24px;display:flex;justify-content:center;align-items:center;overflow:hidden;"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" id="shareCopyText"><svg class="icon"><use href="#ic-copy"/></svg>复制文字</button>
+      <button class="btn btn-primary" id="shareDownload"><svg class="icon"><use href="#ic-download"/></svg>下载图片</button>
+    </div>
+  </div>
+</div>
+
+<!-- 分享卡片渲染容器 -->
+<div id="shareCardRenderContainer" style="position:fixed;left:-9999px;top:0;visibility:hidden;pointer-events:none;"></div>
 
 <!-- 阅读模式 -->
 <div class="reading-overlay hidden" id="readingOverlay">

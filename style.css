@@ -465,13 +465,264 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 @keyframes toastSlideOut{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(8px)}}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 
+/* ── 新功能样式 ── */
+.note-badge {
+  animation: notePulse 2s ease-in-out infinite;
+}
+@keyframes notePulse {
+  0%,100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.2); opacity: 0.8; }
+}
+.share-style-btn.active {
+  border-color: var(--c-accent);
+  color: var(--c-accent);
+  background: var(--c-accent-bg);
+}
+
+/* More Menu */
+.more-menu-wrap {
+  position: relative;
+  display: inline-block;
+}
+.more-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 200px;
+  background: var(--c-surface-2);
+  border: 1.5px solid var(--c-border);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-lg);
+  padding: 6px;
+  z-index: 50;
+  display: none;
+}
+.more-menu.active {
+  display: block;
+  animation: menuPop 0.18s ease-out;
+}
+@keyframes menuPop {
+  from { opacity: 0; transform: translateY(-8px) scale(0.96); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.more-menu-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: var(--r-md);
+  background: transparent;
+  color: var(--c-text-1);
+  font-size: 13.5px;
+  text-align: left;
+  cursor: pointer;
+  border: none;
+  outline: none;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.more-menu-item:hover {
+  background: var(--c-hover);
+}
+.more-menu-item .icon {
+  width: 18px;
+  height: 18px;
+  color: var(--c-text-3);
+  flex-shrink: 0;
+}
+.more-menu-item:hover .icon {
+  color: var(--c-accent);
+}
+.more-menu-sub {
+  margin-left: auto;
+  font-size: 12px;
+  color: var(--c-text-3);
+  flex-shrink: 0;
+}
+
+/* Nav Badge Button */
+.nav-badge-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1.5px solid #3b82f6;
+  background: rgba(59,130,246,0.08);
+  color: #2563eb;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  outline: none;
+}
+.nav-badge-btn:hover {
+  background: rgba(59,130,246,0.15);
+  border-color: #2563eb;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 10px rgba(59,130,246,0.25);
+}
+.nav-badge-dot {
+  width: 7px;
+  height: 7px;
+  background: #3b82f6;
+  border-radius: 50%;
+  animation: badgePulse 1.6s ease-in-out infinite;
+}
+@keyframes badgePulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+    box-shadow: 0 0 0 0 rgba(59,130,246,0.4);
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.9;
+    box-shadow: 0 0 0 8px rgba(59,130,246,0);
+  }
+}
+.nav-badge-text {
+  letter-spacing: 0.02em;
+}
+
+/* Links Modal */
+.links-modal-body {
+  padding: 8px 0;
+}
+.link-group-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--c-text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 12px 20px 6px;
+}
+.link-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px;
+  color: var(--c-text-1);
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.12s ease;
+  font-size: 14px;
+}
+.link-item:hover {
+  background: var(--c-hover);
+}
+.link-item .icon {
+  width: 18px;
+  height: 18px;
+  color: var(--c-text-3);
+}
+.link-item:hover .icon {
+  color: var(--c-accent);
+}
+.link-divider {
+  height: 1px;
+  background: var(--c-border);
+  margin: 8px 0;
+}
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  background: rgba(16,185,129,0.1);
+  color: #059669;
+}
+.status-dot {
+  width: 7px;
+  height: 7px;
+  background: #10b981;
+  border-radius: 50%;
+}
+
+/* Legal Page Modal */
+.legal-page-scroll {
+  max-height: 60vh;
+  overflow-y: auto;
+  padding-right: 8px;
+  margin-right: -8px;
+}
+.legal-page-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+.legal-page-scroll::-webkit-scrollbar-thumb {
+  background: var(--c-border);
+  border-radius: 999px;
+}
+.legal-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--c-text-1);
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--c-border);
+}
+.legal-content {
+  font-size: 14px;
+  line-height: 1.8;
+  color: var(--c-text-2);
+}
+.legal-content h3 {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--c-text-1);
+  margin: 20px 0 10px;
+}
+.legal-content p {
+  margin: 10px 0;
+}
+.legal-content ul {
+  margin: 10px 0;
+  padding-left: 20px;
+}
+.legal-content li {
+  margin: 6px 0;
+}
+.copyright-notice-box {
+  background: var(--c-surface-1);
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-md);
+  padding: 16px;
+  margin: 16px 0;
+}
+.copyright-notice-box .notice-title {
+  font-weight: 600;
+  color: var(--c-text-1);
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+.copyright-notice-box .notice-text {
+  font-size: 13px;
+  color: var(--c-text-2);
+  line-height: 1.7;
+}
+
+/* ── Welcome Modal Scroll Fix ── */
+#welcomeOverlay .modal {
+  max-height: 90vh !important;
+  overflow-y: auto;
+}
+#welcomeOverlay .modal-body {
+  overflow-y: auto;
+  max-height: 60vh;
+}
+
+/* Desktop: Show all button text by default */
+
 /* ── Responsive ── */
 @media(max-width:768px){
   .header-inner{padding:0 16px}
   .logo-sub{display:none}
   .main{padding:18px 16px 80px}
-  .toolbar{gap:6px}
-  .btn span:not(.icon){display:none}
+  .toolbar{gap:6px;flex-wrap:wrap}
+  .btn span{display:none}
   .btn{padding:0 12px}
   .icon-only{width:38px}
   .search-wrap{flex:1 1 0;max-width:unset;min-width:0}
@@ -479,9 +730,12 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
   .filter-select{min-width:100px}
   .cards-grid{grid-template-columns:1fr;gap:12px}
   .card-actions{opacity:1;transform:none}
-  .modal-overlay{align-items:flex-end;padding:0}
-  .modal{border-radius:var(--r-xl) var(--r-xl) 0 0;max-height:88vh;transform:translateY(100%)}
+  .modal-overlay{align-items:flex-start;padding:8px 0 0 0}
+  .modal{border-radius:var(--r-lg) var(--r-lg) 0 0;max-height:85vh;overflow-y:auto;transform:translateY(0)}
   .modal-overlay.active .modal{transform:translateY(0)}
+  .modal-body{overflow-y:auto}
+  .modal-footer{flex-wrap:wrap;gap:8px}
+  .modal-footer .btn{flex:1 1 auto;min-width:0}
   .modal-sm,.modal-settings{max-width:100%}
   .reading-scroll{padding:50px 20px 80px}
   .reading-content{font-size:18px}
@@ -490,6 +744,23 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
   .toast{max-width:unset}
   .adv-filter-inner{gap:10px}
   .stats-grid{grid-template-columns:repeat(2,1fr)}
+  
+  /* Welcome modal specific fixes for mobile */
+  #welcomeOverlay .modal {
+    max-height: 85vh !important;
+    border-radius: var(--r-lg) var(--r-lg) 0 0;
+  }
+  #welcomeOverlay .modal-body {
+    max-height: 55vh;
+    overflow-y: auto;
+  }
+  #welcomeOverlay .modal-footer {
+    position: sticky;
+    bottom: 0;
+    background: var(--c-surface-2);
+    padding-top: 12px;
+    z-index: 1;
+  }
 }
 ::-webkit-scrollbar{width:5px;height:5px}
 ::-webkit-scrollbar-track{background:transparent}
