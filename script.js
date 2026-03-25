@@ -1899,19 +1899,19 @@ if (originalBadge) {
 }
 
 /* Links & Legal Modals */
-document.getElementById('navBadgeBtn').addEventListener('click', () => {
-  openModal('linksOverlay');
-});
-document.getElementById('linksClose').addEventListener('click', () => {
-  closeModal('linksOverlay');
-});
-document.getElementById('openLegalBtn').addEventListener('click', () => {
-  closeModal('linksOverlay');
-  openModal('legalOverlay');
-});
-document.getElementById('legalClose').addEventListener('click', () => {
-  closeModal('legalOverlay');
-});
-['linksOverlay','legalOverlay'].forEach(id => {
-  document.getElementById(id).addEventListener('click', e => { if(e.target.id===id) closeModal(id); });
-});
+const navBadgeBtn = document.getElementById('navBadgeBtn');
+if (navBadgeBtn) {
+  navBadgeBtn.addEventListener('click', () => {
+    openModal('linksOverlay');
+  });
+}
+const linksClose = document.getElementById('linksClose');
+if (linksClose) {
+  linksClose.addEventListener('click', () => {
+    closeModal('linksOverlay');
+  });
+}
+const linksOverlay = document.getElementById('linksOverlay');
+if (linksOverlay) {
+  linksOverlay.addEventListener('click', e => { if(e.target.id==='linksOverlay') closeModal('linksOverlay'); });
+}
