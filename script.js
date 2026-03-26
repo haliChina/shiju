@@ -82,14 +82,27 @@ function fmtDate(ts) {
 /* ── 自动备份 ── */
 function autoBackup(list) {
   const key = BACKUP_PREFIX + new Date().toISOString().slice(0,10);
-  localStorage.setItem(key, JSON.stringify(list));
-  // 清理7天前备份
+  // 先清理旧备份，再写新备份，避免 localStorage 配额溢出
   const cutoff = Date.now() - 7*86400000;
-  for (let i = localStorage.length-1; i >= 0; i--) {
+  for (let i = localStorage.length - 1; i >= 0; i--) {
     const k = localStorage.key(i);
     if (k && k.startsWith(BACKUP_PREFIX)) {
-      const d = new Date(k.replace(BACKUP_PREFIX,''));
+      const d = new Date(k.replace(BACKUP_PREFIX, ''));
       if (d < cutoff) localStorage.removeItem(k);
+    }
+  }
+  try {
+    localStorage.setItem(key, JSON.stringify(list));
+  } catch (e) {
+    if (e.name === 'QuotaExceededError' || e.code === 22) {
+      // 配额已满：删除所有备份后再试一次
+      for (let i = localStorage.length - 1; i >= 0; i--) {
+        const k = localStorage.key(i);
+        if (k && k.startsWith(BACKUP_PREFIX)) localStorage.removeItem(k);
+      }
+      try { localStorage.setItem(key, JSON.stringify(list)); } catch (_) {
+        console.warn('autoBackup: localStorage full, backup skipped');
+      }
     }
   }
 }
@@ -429,19 +442,7 @@ function updateBatchBar() {
 
 const batchModeBtn = document.getElementById('batchModeBtn');
 if (batchModeBtn) {
-  batchModeBtn.addEventListener('click', () => {
-    isBatchMode = !isBatchMode;
-    selectedIds.clear();
-    const bar = document.getElementById('batchBar');
-    const cardsGrid = document.getElementById('cardsGrid');
-    if (!isBatchMode) {
-      if (bar) bar.classList.add('hidden');
-      if (cardsGrid) cardsGrid.classList.remove('batch-mode');
-    } else {
-      showToast('已进入批量选择模式', 'info');
-    }
-    renderCards();
-  });
+  batchModeBtn.addEventListener('click', toggleBatchMode);
 }
 const exitBatchBtn = document.getElementById('exitBatchBtn');
 if (exitBatchBtn) {
@@ -510,10 +511,13 @@ function closeModal(id) {
   }
 });
 document.addEventListener('keydown', e => {
-  if (e.key!=='Escape') return;
-  const order = ['deleteOverlay','editOverlay','noteOverlay','collectionEditOverlay','checkInHistoryOverlay','shareOverlay','legalOverlay','linksOverlay','dailyOverlay','randomOverlay','detailOverlay','settingsOverlay'];
+  if (e.key !== 'Escape') return;
+  const order = ['deleteOverlay','editOverlay','noteOverlay','collectionEditOverlay',
+    'checkInHistoryOverlay','shareOverlay','legalOverlay','linksOverlay',
+    'dailyOverlay','randomOverlay','detailOverlay','settingsOverlay'];
   for (const id of order) {
-    if (document.getElementById(id).classList.contains('active')) { closeModal(id); break; }
+    const el = document.getElementById(id);
+    if (el && el.classList.contains('active')) { closeModal(id); break; }
   }
 });
 
@@ -564,6 +568,28 @@ function addCustomTag() {
 document.getElementById('tagAddBtn').addEventListener('click', addCustomTag);
 tagCustomInput.addEventListener('keydown', e => { if(e.key==='Enter'){e.preventDefault();addCustomTag();} });
 contentInput.addEventListener('input', () => { charCountEl.textContent=`${contentInput.value.length} / 500`; });
+
+/* ── 粘贴优化：自动清理多余空白和格式 ── */
+contentInput.addEventListener('paste', e => {
+  e.preventDefault();
+  const raw = (e.clipboardData || window.clipboardData).getData('text/plain')
+    || (e.clipboardData || window.clipboardData).getData('text');
+  // 清理粘贴内容：统一换行、合并空格、去除多余空行和首尾空白
+  const cleaned = raw
+    .replace(/\r\n|\r/g, '\n')
+    .replace(/[ \t]+/g, ' ')
+    .replace(/\n{3,}/g, '\n\n')
+    .replace(/^\s+|\s+$/g, '');
+  const start = contentInput.selectionStart;
+  const end   = contentInput.selectionEnd;
+  const before = contentInput.value.slice(0, start);
+  const after  = contentInput.value.slice(end);
+  const newVal = (before + cleaned + after).slice(0, 500);
+  contentInput.value = newVal;
+  const pos = Math.min(start + cleaned.length, 500);
+  contentInput.setSelectionRange(pos, pos);
+  charCountEl.textContent = `${newVal.length} / 500`;
+});
 
 function openEditor(id=null) {
   editingId=id; selectedTags=[];
@@ -1809,17 +1835,35 @@ async function downloadShareCard() {
     showToast('生成失败，请重试', 'error');
   }
 }
+/* 兼容不支持 Clipboard API 的环境（HTTP/旧 Safari）*/
+function fallbackCopyText(text) {
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.cssText = 'position:fixed;top:-9999px;left:-9999px;opacity:0';
+  document.body.appendChild(ta);
+  ta.focus(); ta.select();
+  try {
+    const ok = document.execCommand('copy');
+    showToast(ok ? '已复制到剪贴板' : '复制失败，请手动复制', ok ? 'success' : 'error');
+  } catch (err) {
+    showToast('复制失败，请手动复制', 'error');
+  }
+  document.body.removeChild(ta);
+}
+
 function copyShareText() {
   const list = loadData();
   const item = list.find(x => x.id === shareTargetId);
   if (!item) return;
   
   const text = `${item.content}\n\n—— ${item.author || '佚名'}`;
-  navigator.clipboard.writeText(text).then(() => {
-    showToast('已复制到剪贴板', 'success');
-  }).catch(() => {
-    showToast('复制失败', 'error');
-  });
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text)
+      .then(() => showToast('已复制到剪贴板', 'success'))
+      .catch(() => fallbackCopyText(text));
+  } else {
+    fallbackCopyText(text);
+  }
 }
 document.querySelectorAll('.share-style-btn').forEach(btn => {
   btn.addEventListener('click', () => {
