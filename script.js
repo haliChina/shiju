@@ -719,6 +719,7 @@ document.getElementById('deleteConfirmBtn').addEventListener('click', ()=>{
 const SOURCE_KEY = 'shiju_source';
 let randomSource = localStorage.getItem(SOURCE_KEY) || 'local';
 let randomLoading = false;
+let randomCurrentItem = null;
 
 function applySourceSetting(val) {
   randomSource = val;
@@ -727,6 +728,8 @@ function applySourceSetting(val) {
   if (radio) radio.checked = true;
   const warn = document.getElementById('hitokotoWarning');
   if (warn) warn.classList.toggle('visible', val === 'hitokoto');
+  const saveBtn = document.getElementById('randomSaveLocal');
+  if (saveBtn) saveBtn.classList.toggle('hidden', val !== 'hitokoto');
 }
 
 document.querySelectorAll('input[name="randomSource"]').forEach(radio => {
@@ -750,6 +753,7 @@ function loadLocalContent() {
   document.getElementById('randomContent').innerHTML  = esc(item.content);
   document.getElementById('randomAuthor').textContent = item.author||'佚名';
   document.getElementById('randomTags').innerHTML     = tagsHtml(item.tags||[]);
+  randomCurrentItem = { source:'local', item };
   return true;
 }
 
@@ -759,9 +763,13 @@ async function loadHitokotoContent() {
       { signal: AbortSignal.timeout(4000) });
     if (!res.ok) throw new Error('network');
     const data = await res.json();
-    document.getElementById('randomContent').innerHTML  = esc(data.hitokoto||'');
-    document.getElementById('randomAuthor').textContent = [data.from_who, data.from].filter(Boolean).join('·')||'一言';
+    const content = (data.hitokoto||'').trim();
+    const author = [data.from_who, data.from].filter(Boolean).join('·')||'一言';
+    document.getElementById('randomContent').innerHTML  = esc(content);
+    document.getElementById('randomAuthor').textContent = author;
     document.getElementById('randomTags').innerHTML     = `<span class="tag">一言</span>`;
+    const id = (data.id!==undefined && data.id!==null) ? `hitokoto_${String(data.id)}` : genId();
+    randomCurrentItem = { source:'hitokoto', item:{ id, content, author, tags:['一言'], createdAt:Date.now(), favorite:false, rating:0 } };
     return true;
   } catch {
     showToast('一言服务不可用，改用本地数据','info');
@@ -784,6 +792,19 @@ async function showRandom() {
 document.getElementById('randomBtn').addEventListener('click', showRandom);
 document.getElementById('randomClose').addEventListener('click',  ()=>closeModal('randomOverlay'));
 document.getElementById('randomClose2').addEventListener('click', ()=>closeModal('randomOverlay'));
+document.getElementById('randomSaveLocal').addEventListener('click', ()=>{
+  if (!randomCurrentItem || randomCurrentItem.source !== 'hitokoto') return;
+  const item = randomCurrentItem.item;
+  if (!item || !item.content) { showToast('暂无可保存内容','info'); return; }
+  const list = loadData();
+  const exists = list.some(x => x.id===item.id || (x.content===item.content && (x.author||'')===(item.author||'')));
+  if (exists) { showToast('这条句子已在本地','info'); return; }
+  saveData([...list, item]);
+  const ok = loadData().some(x => x.id===item.id);
+  if (!ok) { showToast('保存失败，存储空间可能已满','error'); return; }
+  renderCards();
+  showToast('已保存到本地','success');
+});
 
 /** 换一句：先淡出，等内容加载完再淡回 */
 document.getElementById('randomAgain').addEventListener('click', async () => {
