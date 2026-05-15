@@ -1,0 +1,7 @@
+/* TEAM */
+Product: 拾句 (Shiju)
+Focus: 本地优先的中文句子管理工具
+
+/* SITE */
+Standards: HTML5, CSS3, JavaScript
+SEO: robots.txt, sitemap.xml, structured data, llms.txt

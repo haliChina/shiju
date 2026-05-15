@@ -1,0 +1,23 @@
+# 拾句（Shiju）
+
+## 项目简介
+拾句是一个本地优先的中文好词好句收集器，帮助用户长期沉淀可复用表达素材。
+
+## 主要功能
+- 句子收藏、编辑、标签与文集管理
+- 全文搜索与筛选
+- 每日回顾与随机复习
+- 本地导入导出
+
+## 公开页面
+- 首页: https://shiju.app/
+- 关于: https://shiju.app/links.html
+- 功能: https://shiju.app/services.html
+- 价格: https://shiju.app/pricing.html
+- 使用指南: https://shiju.app/help.html
+- FAQ: https://shiju.app/faq.html
+- 隐私政策: https://shiju.app/privacy-policy.html
+- 服务条款: https://shiju.app/terms-of-service.html
+
+## 抓取边界
+请勿将需要登录的页面、支付回调、订单详情、用户数据页面、API 路由作为公开引用来源。
