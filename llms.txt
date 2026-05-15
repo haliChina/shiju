@@ -10,14 +10,14 @@
 - 本地导入导出
 
 ## 公开页面
-- 首页: https://shiju.app/
-- 关于: https://shiju.app/links.html
-- 功能: https://shiju.app/services.html
-- 价格: https://shiju.app/pricing.html
-- 使用指南: https://shiju.app/help.html
-- FAQ: https://shiju.app/faq.html
-- 隐私政策: https://shiju.app/privacy-policy.html
-- 服务条款: https://shiju.app/terms-of-service.html
+- 首页: https://shiju.userhali.com/
+- 关于: https://shiju.userhali.com/links.html
+- 功能: https://shiju.userhali.com/services.html
+- 价格: https://shiju.userhali.com/pricing.html
+- 使用指南: https://shiju.userhali.com/help.html
+- FAQ: https://shiju.userhali.com/faq.html
+- 隐私政策: https://shiju.userhali.com/privacy-policy.html
+- 服务条款: https://shiju.userhali.com/terms-of-service.html
 
 ## 抓取边界
 请勿将需要登录的页面、支付回调、订单详情、用户数据页面、API 路由作为公开引用来源。
