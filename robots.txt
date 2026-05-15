@@ -13,4 +13,4 @@ Disallow: /notify
 Disallow: /callback
 Disallow: /order/detail/
 
-Sitemap: https://shiju.app/sitemap.xml
+Sitemap: https://shiju.userhali.com/sitemap.xml

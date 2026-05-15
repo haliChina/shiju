@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-label="拾句 - 本地优先的好词好句收集器">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f7f4ef"/>
+      <stop offset="100%" stop-color="#efe6d8"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect x="72" y="88" width="1056" height="454" rx="32" fill="#ffffff" stroke="#e8e1d6" stroke-width="4"/>
+  <text x="140" y="260" font-size="96" font-family="Noto Serif SC, PingFang SC, Microsoft YaHei, serif" fill="#a3722a">拾句</text>
+  <text x="140" y="350" font-size="44" font-family="Noto Sans SC, PingFang SC, Microsoft YaHei, sans-serif" fill="#5c5040">本地优先的好词好句收集器</text>
+  <text x="140" y="420" font-size="30" font-family="Noto Sans SC, PingFang SC, Microsoft YaHei, sans-serif" fill="#9b8c78">收藏 · 分类 · 检索 · 回顾</text>
+</svg>
