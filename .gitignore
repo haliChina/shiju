@@ -1,0 +1,4 @@
+# Security: never commit environment files with secrets
+.env
+.env.local
+.env.*
