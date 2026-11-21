@@ -126,7 +126,7 @@
       <select class="filter-select" id="tagFilter"><option value="">全部标签</option></select>
       <svg class="icon filter-suffix-icon"><use href="#ic-chevron-down"/></svg>
     </div>
-    <div class="sort-wrap" style="display:none;">
+    <div class="sort-wrap">
       <button class="btn btn-outline sort-btn" id="sortBtn">
         <svg class="icon"><use href="#ic-sort"/></svg>
         <span id="sortLabel">最新</span>
@@ -140,7 +140,7 @@
         <button class="sort-opt" data-sort="rating-desc">评分从高到低</button>
       </div>
     </div>
-    <button class="btn btn-outline filter-adv-btn" id="filterAdvBtn" title="高级筛选" style="display:none;">
+    <button class="btn btn-outline filter-adv-btn" id="filterAdvBtn" title="高级筛选">
       <svg class="icon"><use href="#ic-filter"/></svg>
       <span class="filter-adv-badge" id="filterBadge" style="display:none"></span>
     </button>
@@ -462,6 +462,10 @@
             <button class="btn btn-primary" id="importDoBtn" disabled><svg class="icon"><use href="#ic-check"/></svg>导入</button>
           </div>
           <div class="import-filename" id="importFilename"></div>
+        </div>
+        <div class="data-action-group">
+          <div class="data-action-desc">应用每天会把句库自动备份一份到本地浏览器（保留近 7 天）。误删后可用最近一次自动备份恢复，会覆盖当前句库。</div>
+          <button class="btn btn-outline w-full" id="restoreBackupBtn"><svg class="icon"><use href="#ic-upload"/></svg>恢复最近自动备份</button>
         </div>
         <div class="data-action-group data-action-danger">
           <div class="data-action-desc"><svg style="width:13px;height:13px;vertical-align:-1px;margin-right:5px;color:var(--c-danger)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>此操作将永久清空所有数据，无法恢复。</div>

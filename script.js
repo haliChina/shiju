@@ -12,6 +12,7 @@ const PRESET_TAGS       = ['励志','爱情','人生','自然','友情','哲思'
 const COLLECTIONS_KEY   = 'shiju_collections';
 const CHECKIN_KEY       = 'shiju_checkins';
 const DAILY_RECOMM_KEY  = 'shiju_daily_recomm';
+const SAMPLE_SEEDED_KEY = 'shiju_samples_seeded';
 
 /* ── 状态 ── */
 let activeTag         = '';
@@ -37,15 +38,24 @@ const SORT_LABELS = { newest:'最新', oldest:'最早', 'author-asc':'作者↑'
 
 /* ── 数据层 ── */
 function loadData() {
-  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; } catch { return []; }
+  try {
+    const raw = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+    if (!Array.isArray(raw)) return [];
+    // 过滤历史坏数据（非对象 / content 非字符串），避免一条坏记录让整个列表渲染崩溃
+    return raw.filter(i => i && typeof i === 'object' && typeof i.content === 'string')
+              .map(i => ({ ...i, tags: Array.isArray(i.tags) ? i.tags.filter(t => typeof t === 'string') : [] }));
+  } catch { return []; }
 }
 function saveData(list) {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
-    autoBackup(list);
   } catch (e) {
     console.warn('saveData failed:', e);
+    if (typeof showToast === 'function') showToast('保存失败，存储空间可能已满', 'error');
+    return false;
   }
+  autoBackup(list);
+  return true;
 }
 function loadCollections() {
   try { return JSON.parse(localStorage.getItem(COLLECTIONS_KEY)) || []; } catch { return []; }
@@ -69,6 +79,8 @@ function genId() {
   return Date.now().toString(36) + Math.random().toString(36).slice(2,6);
 }
 function esc(str) {
+  if (str === null || str === undefined) return '';
+  str = String(str);
   if (!str) return '';
   return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
             .replace(/"/g,'&quot;').replace(/'/g,'&#39;').replace(/\n/g,'<br>');
@@ -81,6 +93,8 @@ function fmtDate(ts) {
 
 /* ── 自动备份 ── */
 function autoBackup(list) {
+  // 空库不写备份，避免「删除所有数据」把当天备份覆盖成空数组
+  if (!list || !list.length) return;
   const key = BACKUP_PREFIX + new Date().toISOString().slice(0,10);
   // 先清理旧备份，再写新备份，避免 localStorage 配额溢出
   const cutoff = Date.now() - 7*86400000;
@@ -105,6 +119,21 @@ function autoBackup(list) {
       }
     }
   }
+}
+
+function getLatestBackup() {
+  let latest = null;
+  for (let i = 0; i < localStorage.length; i++) {
+    const k = localStorage.key(i);
+    if (!k || !k.startsWith(BACKUP_PREFIX)) continue;
+    try {
+      const arr = JSON.parse(localStorage.getItem(k));
+      if (Array.isArray(arr) && arr.length && (!latest || k > latest.key)) {
+        latest = { key: k, date: k.replace(BACKUP_PREFIX, ''), list: arr };
+      }
+    } catch (_) {}
+  }
+  return latest;
 }
 
 /* ── 主题 (light / dark / auto) ── */
@@ -244,7 +273,7 @@ function buildCard(item) {
     <div class="card-body">${esc(item.content)}</div>
     <div class="card-rating">${ratingHtml}</div>
     <div class="card-footer">
-      <span class="card-author">${esc(item.author||'佚名')}</span>
+      <span class="card-author" title="${esc(item.author||'佚名')}">${esc(item.author||'佚名')}</span>
       <div class="card-tags">${tagsHtml(item.tags,true)}</div>
       <div class="card-actions">
         <button class="card-act-btn" title="笔记" aria-label="笔记"><svg class="icon"><use href="#ic-note"/></svg></button>
@@ -417,6 +446,8 @@ function toggleBatchMode() {
     if (bar) bar.classList.add('hidden');
     if (cardsGrid) cardsGrid.classList.remove('batch-mode');
   } else {
+    if (bar) bar.classList.remove('hidden');
+    updateBatchBar();
     showToast('已进入批量选择模式', 'info');
   }
   renderCards();
@@ -436,7 +467,8 @@ function updateBatchBar() {
   const batchCount = document.getElementById('batchCount');
   if (bar && batchCount) {
     batchCount.textContent = `已选 ${selectedIds.size} 项`;
-    if (selectedIds.size > 0) bar.classList.remove('hidden');
+    if (isBatchMode || selectedIds.size > 0) bar.classList.remove('hidden');
+    else bar.classList.add('hidden');
   }
 }
 
@@ -618,15 +650,19 @@ function saveItem() {
     contentInput.focus(); return;
   }
   const list = loadData();
+  let successMsg;
   if (editingId) {
     const idx = list.findIndex(x=>x.id===editingId);
     if (idx!==-1) list[idx] = {...list[idx], content, author:authorInput.value.trim(), tags:selectedTags, updatedAt:Date.now()};
-    showToast('句子已保存','success');
+    successMsg = '句子已保存';
   } else {
     list.push({id:genId(), content, author:authorInput.value.trim(), tags:selectedTags, createdAt:Date.now(), favorite:false, rating:0});
-    showToast('已添加好句','success');
+    successMsg = '已添加好句';
   }
-  saveData(list); closeModal('editOverlay'); renderCards();
+  // 保存失败时 saveData 已弹错误提示：保留弹窗和输入内容，不报成功
+  if (!saveData(list)) return;
+  showToast(successMsg,'success');
+  closeModal('editOverlay'); renderCards();
 }
 document.getElementById('editSave').addEventListener('click', saveItem);
 document.getElementById('editClose').addEventListener('click', ()=>closeModal('editOverlay'));
@@ -702,17 +738,22 @@ document.getElementById('deleteCancelBtn').addEventListener('click', ()=>closeMo
 document.getElementById('deleteConfirmBtn').addEventListener('click', ()=>{
   if (!pendingDelete) return;
   let list = loadData();
+  let msg;
   if (pendingDelete.isBatch) {
     const ids = pendingDelete.ids;
     list = list.filter(x=>!ids.includes(x.id));
     selectedIds.clear();
     document.getElementById('batchBar').classList.add('hidden');
-    showToast(`已删除 ${ids.length} 条句子`,'info');
+    // 批量删除完成后必须退出批量模式，否则卡片上复选框还在、批量栏却已隐藏，出不去
+    isBatchMode = false;
+    msg = `已删除 ${ids.length} 条句子`;
   } else {
     list = list.filter(x=>x.id!==pendingDelete.id);
-    showToast('句子已删除','info');
+    msg = '句子已删除';
   }
-  saveData(list); closeModal('deleteOverlay'); renderCards(); pendingDelete=null;
+  if (!saveData(list)) return;
+  showToast(msg,'info');
+  closeModal('deleteOverlay'); renderCards(); pendingDelete=null;
 });
 
 /* ── 随机推荐来源 ── */
@@ -1188,8 +1229,26 @@ document.getElementById('importDoBtn').addEventListener('click', ()=>{
   if (!importFileData) return;
   const list = loadData();
   const existIds = new Set(list.map(i=>i.id));
-  const newItems = importFileData.filter(i=>i.id&&i.content&&!existIds.has(i.id));
-  saveData([...list,...newItems]);
+  // 校验：跳过非对象、content 非字符串、与现有库或文件内部重复 id 的记录，并规范字段类型，
+  // 避免坏数据落盘后每次渲染都崩
+  const seenInFile = new Set();
+  const newItems = [];
+  for (const raw of importFileData) {
+    if (!raw || typeof raw !== 'object') continue;
+    if (raw.id === null || raw.id === undefined || typeof raw.content !== 'string' || !raw.content.trim()) continue;
+    const id = String(raw.id);
+    if (existIds.has(id) || seenInFile.has(id)) continue;
+    seenInFile.add(id);
+    newItems.push({
+      ...raw, id, content: raw.content,
+      author: typeof raw.author === 'string' ? raw.author : '',
+      tags: Array.isArray(raw.tags) ? raw.tags.filter(t => typeof t === 'string') : [],
+      rating: Number.isFinite(raw.rating) ? Math.min(5, Math.max(0, raw.rating)) : 0,
+      favorite: !!raw.favorite,
+      createdAt: Number.isFinite(raw.createdAt) ? raw.createdAt : Date.now(),
+    });
+  }
+  if (!saveData([...list,...newItems])) return;
   renderCards(); refreshStats(); refreshTagMgmt();
   document.getElementById('importDoBtn').disabled = true;
   document.getElementById('importFilename').textContent = '';
@@ -1198,8 +1257,18 @@ document.getElementById('importDoBtn').addEventListener('click', ()=>{
 });
 document.getElementById('deleteAllBtn').addEventListener('click', ()=>{
   if (!confirm('确定要删除所有数据吗？此操作无法恢复！')) return;
+  // 标记示例已投放：清空后刷新不能再把 6 条示例句子灌回来
+  try { localStorage.setItem(SAMPLE_SEEDED_KEY, '1'); } catch (_) {}
   saveData([]); renderCards(); refreshStats(); refreshTagMgmt();
   showToast('所有数据已清空','info');
+});
+document.getElementById('restoreBackupBtn').addEventListener('click', ()=>{
+  const backup = getLatestBackup();
+  if (!backup) { showToast('没有可恢复的自动备份','info'); return; }
+  if (!confirm(`确定要用 ${backup.date} 的自动备份覆盖当前句库吗？备份共 ${backup.list.length} 条，当前 ${loadData().length} 条将被替换。`)) return;
+  if (!saveData(backup.list)) return;
+  renderCards(); refreshStats(); refreshTagMgmt();
+  showToast(`已恢复 ${backup.date} 的备份（${backup.list.length} 条）`,'success');
 });
 
 /* ── Toast ── */
@@ -1216,7 +1285,12 @@ function showToast(msg, type='info', ms=2800) {
 
 /* ── 示例数据 ── */
 function initSampleData() {
-  if (loadData().length>0) return;
+  // 只投放一次：用户把句子删到 0 条（含删除所有数据）后，刷新不能再灌回示例
+  try { if (localStorage.getItem(SAMPLE_SEEDED_KEY)) return; } catch (_) {}
+  if (loadData().length>0) {
+    try { localStorage.setItem(SAMPLE_SEEDED_KEY, '1'); } catch (_) {}
+    return;
+  }
   const samples = [
     {content:'人生若只如初见，何事秋风悲画扇。',author:'纳兰性德',tags:['诗词','爱情']},
     {content:'不以物喜，不以己悲。',author:'范仲淹《岳阳楼记》',tags:['哲思','人生']},
@@ -1231,6 +1305,7 @@ function initSampleData() {
     favorite:false, rating:0
   }));
   saveData(list);
+  try { localStorage.setItem(SAMPLE_SEEDED_KEY, '1'); } catch (_) {}
 }
 
 /* ── 抖动动画 ── */
@@ -1452,8 +1527,10 @@ function refreshCollectionMgmt() {
     return;
   }
   
+  const validIds = new Set(list.map(i => i.id));
   collections.forEach(c => {
-    const itemCount = (c.items || []).length;
+    // 只数还存在的句子：已删句子的 id 会残留在文集里，不剔除会长期虚高
+    const itemCount = (c.items || []).filter(id => validIds.has(id)).length;
     const row = document.createElement('div');
     row.className = 'tag-mgmt-item';
     row.innerHTML = `
@@ -1628,13 +1705,14 @@ function getTodayStr() {
 function getDailyRecommendation() {
   const today = getTodayStr();
   const saved = loadDailyRecomm();
-  
-  if (saved && saved.date === today) {
-    const list = loadData();
-    return list.find(x => x.id === saved.itemId);
-  }
-  
   const list = loadData();
+
+  if (saved && saved.date === today) {
+    const found = list.find(x => x.id === saved.itemId);
+    if (found) return found;
+    // 今日推荐的那条已被删除：落到下面重新抽一条，不能误报「还没有收藏」
+  }
+
   if (!list.length) return null;
   
   const checkIns = loadCheckIns();
@@ -1664,7 +1742,12 @@ function checkIn(itemId) {
     showToast('今天已经打卡了哦', 'info');
     return;
   }
-  
+
+  if (!loadData().some(x => x.id === itemId)) {
+    showToast('这条句子已不存在，无法打卡', 'info');
+    return;
+  }
+
   checkIns.push({ id: genId(), date: today, itemId, checkedAt: Date.now() });
   saveCheckIns(checkIns);
   showToast('打卡成功！', 'success');
@@ -1731,8 +1814,8 @@ document.getElementById('dailyBtn').addEventListener('click', openDailyModal);
 document.getElementById('dailyClose').addEventListener('click', () => closeModal('dailyOverlay'));
 document.getElementById('dailySkip').addEventListener('click', () => closeModal('dailyOverlay'));
 document.getElementById('dailyCheckIn').addEventListener('click', () => {
-  const saved = loadDailyRecomm();
-  if (saved && saved.itemId) checkIn(saved.itemId);
+  const item = getDailyRecommendation();
+  if (item) checkIn(item.id);
 });
 document.getElementById('viewHistoryBtn').addEventListener('click', showCheckInHistory);
 document.getElementById('checkInHistoryClose').addEventListener('click', () => closeModal('checkInHistoryOverlay'));
@@ -1835,7 +1918,10 @@ async function downloadShareCard() {
   renderContainer.innerHTML = buildShareCardHTML(item, shareStyle);
   const cardEl = renderContainer.firstElementChild;
   if (!cardEl) return;
-  
+
+  // 容器带 visibility:hidden 时 html2canvas 会截到空白图（PDF 导出容器就没有这个属性）：
+  // 截图期间临时改为可见，容器在屏幕外（left:-9999px），用户看不到
+  renderContainer.style.visibility = 'visible';
   try {
     const canvas = await html2canvas(cardEl, {
       scale: 2,
@@ -1844,16 +1930,18 @@ async function downloadShareCard() {
       useCORS: true,
       allowTaint: true
     });
-    
+
     const a = document.createElement('a');
     a.href = canvas.toDataURL('image/png');
     a.download = `拾句_${fmtDate(Date.now())}.png`;
     a.click();
-    
+
     showToast('分享卡片已下载', 'success');
   } catch (e) {
     console.error(e);
     showToast('生成失败，请重试', 'error');
+  } finally {
+    renderContainer.style.visibility = 'hidden';
   }
 }
 /* 兼容不支持 Clipboard API 的环境（HTTP/旧 Safari）*/
@@ -1920,7 +2008,10 @@ document.addEventListener('click', (e) => {
     closeMoreMenu();
   }
 });
-document.getElementById('moreSortBtn').addEventListener('click', () => {
+document.getElementById('moreSortBtn').addEventListener('click', (e) => {
+  // 必须拦截冒泡：否则这次点击继续冒泡到 document 的「点击排序区域外关闭下拉」
+  // 处理器，会把刚打开的下拉立刻关掉，菜单里点排序永远没反应
+  e.stopPropagation();
   closeMoreMenu();
   document.getElementById('sortBtn').click();
 });
