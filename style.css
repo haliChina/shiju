@@ -777,13 +777,16 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
   .card-author{max-width:150px}
   .cards-grid{grid-template-columns:1fr;gap:12px}
   .card-actions{opacity:1;transform:none}
-  .modal-overlay{align-items:flex-start;padding:8px 0 0 0}
-  .modal{border-radius:var(--r-lg) var(--r-lg) 0 0;max-height:85vh;overflow-y:auto;transform:translateY(0)}
+  .modal-overlay{align-items:flex-end;padding:0}
+  .modal{border-radius:var(--r-lg) var(--r-lg) 0 0;max-height:88dvh;overflow-y:auto;transform:translateY(0);width:100%}
   .modal-overlay.active .modal{transform:translateY(0)}
   .modal-body{overflow-y:auto}
   .modal-footer{flex-wrap:wrap;gap:8px}
   .modal-footer .btn{flex:1 1 auto;min-width:0}
   .modal-sm,.modal-settings{max-width:100%}
+  .settings-tabs{padding:0 12px;overflow-x:auto;scrollbar-width:none}
+  .settings-tabs::-webkit-scrollbar{display:none}
+  .settings-tab{white-space:nowrap;flex-shrink:0;padding:12px 10px;font-size:13px}
   .reading-scroll{padding:50px 20px 80px}
   .reading-content{font-size:18px}
   .reading-nav{display:none}
