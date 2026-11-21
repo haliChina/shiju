@@ -96,6 +96,9 @@ function autoBackup(list) {
   // 空库不写备份，避免「删除所有数据」把当天备份覆盖成空数组
   if (!list || !list.length) return;
   const key = BACKUP_PREFIX + new Date().toISOString().slice(0,10);
+  // 当天备份内容没变就跳过：每次收藏/评分都会保存，没必要反复重写整份备份
+  const serialized = JSON.stringify(list);
+  try { if (localStorage.getItem(key) === serialized) return; } catch (_) {}
   // 先清理旧备份，再写新备份，避免 localStorage 配额溢出
   const cutoff = Date.now() - 7*86400000;
   for (let i = localStorage.length - 1; i >= 0; i--) {
@@ -106,7 +109,7 @@ function autoBackup(list) {
     }
   }
   try {
-    localStorage.setItem(key, JSON.stringify(list));
+    localStorage.setItem(key, serialized);
   } catch (e) {
     if (e.name === 'QuotaExceededError' || e.code === 22) {
       // 配额已满：删除所有备份后再试一次
@@ -114,7 +117,7 @@ function autoBackup(list) {
         const k = localStorage.key(i);
         if (k && k.startsWith(BACKUP_PREFIX)) localStorage.removeItem(k);
       }
-      try { localStorage.setItem(key, JSON.stringify(list)); } catch (_) {
+      try { localStorage.setItem(key, serialized); } catch (_) {
         console.warn('autoBackup: localStorage full, backup skipped');
       }
     }
@@ -274,7 +277,7 @@ function buildCard(item) {
     <div class="card-rating">${ratingHtml}</div>
     <div class="card-footer">
       <span class="card-author" title="${esc(item.author||'佚名')}">${esc(item.author||'佚名')}</span>
-      <div class="card-tags">${tagsHtml(item.tags,true)}</div>
+      <div class="card-tags">${(item.verified && item.source) ? '<span class="verified-badge" title="出处已核查"><svg class="icon"><use href="#ic-check-circle"/></svg>已核查</span>' : ''}${tagsHtml(item.tags,true)}</div>
       <div class="card-actions">
         <button class="card-act-btn" title="笔记" aria-label="笔记"><svg class="icon"><use href="#ic-note"/></svg></button>
         <button class="card-act-btn" title="分享" aria-label="分享"><svg class="icon"><use href="#ic-share"/></svg></button>
@@ -350,11 +353,14 @@ function renderCards() {
   if (isBatchMode) grid.classList.add('batch-mode');
   else             grid.classList.remove('batch-mode');
 
+  // 批量挂载减少重排；动画延迟封顶 0.3s，避免列表长时后面的卡片要等几秒才淡入
+  const frag = document.createDocumentFragment();
   sorted.forEach((item, idx) => {
     const card = buildCard(item);
-    card.style.animationDelay = `${idx*0.04}s`;
-    grid.appendChild(card);
+    card.style.animationDelay = `${Math.min(idx * 0.04, 0.3)}s`;
+    frag.appendChild(card);
   });
+  grid.appendChild(frag);
 }
 
 function toggleFavorite(id) {
@@ -371,10 +377,13 @@ function toggleFavorite(id) {
 /* ── 搜索/筛选事件 ── */
 const searchInput = document.getElementById('searchInput');
 const searchClear = document.getElementById('searchClear');
+let searchDebounceTimer = null;
 searchInput.addEventListener('input', () => {
   searchKeyword = searchInput.value;
   searchClear.classList.toggle('visible', !!searchKeyword);
-  renderCards();
+  // 防抖：连续打字时每键都全量重渲染很浪费，停顿 120ms 后再渲染
+  clearTimeout(searchDebounceTimer);
+  searchDebounceTimer = setTimeout(renderCards, 120);
 });
 searchClear.addEventListener('click', () => {
   searchInput.value = ''; searchKeyword = '';
@@ -702,10 +711,38 @@ function refreshDetailFavBtn(isFav) {
   document.getElementById('detailFavIcon').querySelector('use').setAttribute('href',`#ic-${isFav?'star-fill':'star'}`);
   document.getElementById('detailFavText').textContent = isFav ? '取消收藏' : '收藏';
 }
+/* ── 背诵挖空：随机遮住约 45% 的字（标点不遮），自己默背后再显示原文对答案 ── */
+let reciteMasked = false;
+function maskContent(text) {
+  const chars = [...String(text)];
+  const candidates = [];
+  chars.forEach((c, i) => { if (!/[，。！？；：、,.!?;:\s《》「」『』（）()·—…\-"'“”‘’]/u.test(c)) candidates.push(i); });
+  if (!candidates.length) return text;
+  const maskCount = Math.max(1, Math.floor(candidates.length * 0.45));
+  const chosen = new Set();
+  while (chosen.size < maskCount) chosen.add(candidates[Math.floor(Math.random() * candidates.length)]);
+  return chars.map((c, i) => chosen.has(i) ? '▢' : c).join('');
+}
+
 function openDetail(id) {
   const item = loadData().find(x=>x.id===id); if (!item) return;
   detailId = id;
+  reciteMasked = false;
+  const reciteTextEl = document.getElementById('detailReciteText');
+  if (reciteTextEl) reciteTextEl.textContent = '背诵';
   document.getElementById('detailContent').innerHTML = esc(item.content);
+  // 出处核查信息（来自 doc/ 核查管线导入的数据）
+  const verifyEl = document.getElementById('detailVerify');
+  if (verifyEl) {
+    if (item.verified && item.source) {
+      const safeUrl = typeof item.sourceUrl === 'string' && /^https?:\/\//i.test(item.sourceUrl) ? item.sourceUrl : '';
+      verifyEl.style.display = 'flex';
+      verifyEl.innerHTML = `<svg class="icon icon-sm"><use href="#ic-check-circle"/></svg><span>已核查出处：${esc(item.source)}${safeUrl ? ` · <a href="${esc(safeUrl)}" target="_blank" rel="noopener noreferrer">原文链接</a>` : ''}</span>`;
+    } else {
+      verifyEl.style.display = 'none';
+      verifyEl.innerHTML = '';
+    }
+  }
   document.getElementById('detailAuthor').textContent = item.author||'佚名';
   document.getElementById('detailDate').textContent   = item.createdAt ? `收集于 ${fmtDate(item.createdAt)}` : '';
   document.getElementById('detailTags').innerHTML     = tagsHtml(item.tags||[]);
@@ -725,6 +762,19 @@ document.getElementById('detailFavorite').addEventListener('click', ()=>toggleFa
 document.getElementById('detailNote').addEventListener('click', ()=>openNoteEditor(detailId));
 document.getElementById('detailCollection').addEventListener('click', ()=>openCollectionSelector(detailId));
 document.getElementById('detailShare').addEventListener('click', ()=>openShareModal(detailId));
+document.getElementById('detailRecite').addEventListener('click', ()=>{
+  const item = loadData().find(x=>x.id===detailId); if (!item) return;
+  const el = document.getElementById('detailContent');
+  reciteMasked = !reciteMasked;
+  if (reciteMasked) {
+    el.textContent = maskContent(item.content);
+    document.getElementById('detailReciteText').textContent = '显示原文';
+    showToast('背诵模式：先默背，再点「显示原文」对答案','info');
+  } else {
+    el.innerHTML = esc(item.content);
+    document.getElementById('detailReciteText').textContent = '背诵';
+  }
+});
 
 /* ── 删除确认 ── */
 function openDeleteConfirm(id) {
@@ -1322,6 +1372,9 @@ try { applySourceSetting(localStorage.getItem(SOURCE_KEY) || 'local'); } catch(e
 // 仅老用户（已完成引导）才执行示例数据填充；首次用户由欢迎弹窗接管
 if (localStorage.getItem('shiju_onboarded')) {
   try { initSampleData(); } catch(e) { console.warn('initSampleData failed:', e); }
+  // 回访用户不再展示底部产品介绍（内容仍在 HTML 里，搜索引擎照常读取）
+  const seoIntroEl = document.getElementById('seoIntro');
+  if (seoIntroEl) seoIntroEl.hidden = true;
 }
 renderCards();
 

@@ -79,6 +79,12 @@ shiju/
 └── faq.html
 ```
 
+## 名言征集与核查（doc/）
+
+`doc/` 是给 Agent / 大模型用的名言征集管线：按统一流程搜集名人名言、逐条核查原文出处，
+产出可直接在网页「设置 → 数据管理 → 导入」的 JSON 成品包；带核查信息的句子在站内会显示「已核查」徽章与出处。
+入口见 [doc/README.md](doc/README.md)，操作手册见 [doc/AGENT_GUIDE.md](doc/AGENT_GUIDE.md)。
+
 ## 部署
 
 这是一个静态项目，可直接部署到 Vercel、Netlify、Cloudflare Pages 或任意静态服务器。仓库根目录不需要构建命令。

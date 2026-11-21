@@ -12,13 +12,22 @@
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://shiju.userhali.com/" />
   <meta property="og:image" content="https://shiju.userhali.com/og-image.png" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="拾句 - 本地优先的好词好句收集器" />
+  <meta property="og:locale" content="zh_CN" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="拾句 · 好词好句收集器" />
   <meta name="twitter:description" content="帮助你系统整理好词好句并随时检索复用。" />
   <meta name="twitter:image" content="https://shiju.userhali.com/og-image.png" />
+  <meta name="twitter:image:alt" content="拾句 - 本地优先的好词好句收集器" />
+  <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f7f4ef" />
+  <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#16130e" />
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='18 12 430 374'><path fill='%23a3722a' d='M259.67,213.87c0-117.21,112.6-186.38,184.66-198.87v69.17c-39.41,10.57-86.7,64.37-88.95,122.98h88.95v72.91c0,56.3-52.6,101.94-117.5,101.94h-67.16V213.87z M21.34,213.87C21.34,96.66,133.94,27.49,206,15v69.17c-39.41,10.57-86.7,64.37-88.95,122.98h87.82v72.91c0,56.3-52.6,101.94-117.5,101.94H21.34V213.87z'/></svg>">
   <link rel="stylesheet" href="style.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;600&display=swap" rel="stylesheet" />
 
 <script type="application/ld+json">
@@ -30,6 +39,10 @@
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"SoftwareApplication","name":"拾句","applicationCategory":"ProductivityApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"CNY"},"description":"用于收集、标注、检索和复习好词好句的网页工具。"}
 </script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"拾句的数据存在哪里？","acceptedAnswer":{"@type":"Answer","text":"全部保存在当前浏览器的本地存储中，不上传服务器；可以用 JSON 导出功能把句库备份到文件，再在另一台设备上导入。"}},{"@type":"Question","name":"拾句适合哪些人？","acceptedAnswer":{"@type":"Answer","text":"适合需要积累好词好句的学生、备考作文的考生，以及日常写作的创作者和内容团队。"}},{"@type":"Question","name":"拾句收费吗？","acceptedAnswer":{"@type":"Answer","text":"不收费，打开网页即可使用，核心收藏、检索、评分与回顾功能全部免费。"}}]}
+</script>
+<link rel="alternate" hreflang="zh-CN" href="https://shiju.userhali.com/" />
 </head>
 <body>
 <svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
@@ -92,7 +105,7 @@
         <svg class="logo-mark-svg" viewBox="18 12 430 374" aria-hidden="true"><path fill="var(--c-accent)" d="M259.67,213.87c0-117.21,112.6-186.38,184.66-198.87v69.17c-39.41,10.57-86.7,64.37-88.95,122.98h88.95v72.91c0,56.3-52.6,101.94-117.5,101.94h-67.16V213.87z M21.34,213.87C21.34,96.66,133.94,27.49,206,15v69.17c-39.41,10.57-86.7,64.37-88.95,122.98h87.82v72.91c0,56.3-52.6,101.94-117.5,101.94H21.34V213.87z"/></svg>
       </div>
       <div class="logo-texts">
-        <span class="logo-name">拾句</span>
+        <h1 class="logo-name">拾句</h1>
         <span class="logo-sub">好词好句收集器</span>
       </div>
     </div>
@@ -111,9 +124,6 @@
 </header>
 
 <main class="main">
-  <section id="seoIntro" class="welcome" aria-label="产品介绍">
-    <h2>这是什么</h2><p>拾句是一个面向中文内容创作的句子管理工具。你可以把读书、刷网页、做采访时遇到的优质表达随手收藏到本地，再按标签、作者、文集和评分快速检索，在写作和复习时直接调用。</p>
-  </section>
   <section class="toolbar">
     <button class="btn btn-primary" id="addBtn"><svg class="icon"><use href="#ic-plus"/></svg><span>添加句子</span></button>
     <div class="search-wrap">
@@ -219,6 +229,31 @@
       <p class="empty-desc">试试其他关键词或筛选条件</p>
     </div>
   </section>
+
+  <!-- 产品介绍：放在页面底部弱化展示，不挡工具使用；完成引导的回访用户由 JS 直接隐藏 -->
+  <section id="seoIntro" class="seo-intro" aria-label="产品介绍">
+    <h2>关于拾句</h2>
+    <p>拾句是一个面向中文内容创作的句子管理工具。你可以把读书、刷网页、做采访时遇到的优质表达随手收藏到本地，再按标签、作者、文集和评分快速检索，在写作和复习时直接调用。</p>
+    <p>无论是语文课上的好词好句摘抄、写作文前翻一翻积累的作文素材，还是把读到的名人名言、诗词名句和散文段落长期沉淀下来，拾句都把它们存在你自己的浏览器里：不用注册、不用登录，打开就能记、就能搜。配合每日打卡和随机回顾，好句不再是抄完就忘的笔记本，而是随时能调出来的素材库。</p>
+    <div class="seo-faq">
+      <h3>常见问题</h3>
+      <dl>
+        <dt>拾句的数据存在哪里？</dt>
+        <dd>全部保存在当前浏览器的本地存储中，不上传服务器；可以用 JSON 导出功能把句库备份到文件，再在另一台设备上导入。</dd>
+        <dt>拾句适合哪些人？</dt>
+        <dd>适合需要积累好词好句的学生、备考作文的考生，以及日常写作的创作者和内容团队。</dd>
+        <dt>拾句收费吗？</dt>
+        <dd>不收费，打开网页即可使用，核心收藏、检索、评分与回顾功能全部免费。</dd>
+      </dl>
+    </div>
+    <nav class="seo-links" aria-label="更多页面">
+      <a href="help.html">使用指南</a>
+      <a href="faq.html">常见问题</a>
+      <a href="services.html">功能介绍</a>
+      <a href="pricing.html">价格</a>
+      <a href="links.html">相关链接</a>
+    </nav>
+  </section>
 </main>
 
 <!-- 添加/编辑弹窗 -->
@@ -274,6 +309,7 @@
         <div class="detail-meta-item"><svg class="icon icon-sm"><use href="#ic-calendar"/></svg><span id="detailDate"></span></div>
       </div>
       <div class="detail-tags" id="detailTags"></div>
+      <div class="detail-meta-item detail-verify" id="detailVerify" style="display:none"></div>
       <div class="detail-rating-wrap">
         <span class="rating-label">评分</span>
         <div class="rating-stars" id="detailRating" role="group" aria-label="评分"></div>
@@ -284,6 +320,7 @@
       <button class="btn btn-ghost" id="detailNote"><svg class="icon"><use href="#ic-note"/></svg><span id="detailNoteText">笔记</span></button>
       <button class="btn btn-ghost" id="detailCollection"><svg class="icon"><use href="#ic-folder"/></svg></button>
       <button class="btn btn-ghost" id="detailShare"><svg class="icon"><use href="#ic-share"/></svg></button>
+      <button class="btn btn-ghost" id="detailRecite"><svg class="icon"><use href="#ic-book-open"/></svg><span id="detailReciteText">背诵</span></button>
       <button class="btn btn-ghost" id="detailFavorite"><svg class="icon" id="detailFavIcon"><use href="#ic-star"/></svg><span id="detailFavText">收藏</span></button>
       <button class="btn btn-primary" id="detailEdit"><svg class="icon"><use href="#ic-edit"/></svg></button>
     </div>
@@ -629,7 +666,7 @@
       <div class="welcome-logo-ring">
         <svg viewBox="18 12 430 374" class="welcome-logo-svg" aria-hidden="true"><path fill="currentColor" d="M259.67,213.87c0-117.21,112.6-186.38,184.66-198.87v69.17c-39.41,10.57-86.7,64.37-88.95,122.98h88.95v72.91c0,56.3-52.6,101.94-117.5,101.94h-67.16V213.87z M21.34,213.87C21.34,96.66,133.94,27.49,206,15v69.17c-39.41,10.57-86.7,64.37-88.95,122.98h87.82v72.91c0,56.3-52.6,101.94-117.5,101.94H21.34V213.87z"/></svg>
       </div>
-      <h1 class="welcome-title" id="welcomeTitle">欢迎使用拾句</h1>
+      <h2 class="welcome-title" id="welcomeTitle">欢迎使用拾句</h2>
       <p class="welcome-subtitle">遇见打动你的文字，把它收藏起来</p>
     </div>
 

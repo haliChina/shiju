@@ -255,6 +255,26 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 .tag.active{background:var(--c-accent);color:var(--c-white)}
 @keyframes cardFadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
 
+/* ── 产品介绍（页面底部弱化展示） ── */
+.seo-intro{margin-top:36px;padding-top:18px;border-top:1px solid var(--c-border-light)}
+.seo-intro h2{font-family:var(--font-serif);font-size:15px;font-weight:600;color:var(--c-text-3);letter-spacing:.04em;margin-bottom:6px}
+.seo-intro p{font-size:12.5px;color:var(--c-text-4);line-height:1.75;max-width:76ch}
+.seo-intro[hidden]{display:none}
+.seo-intro h3{font-size:13px;font-weight:600;color:var(--c-text-3);margin:14px 0 6px}
+.seo-intro dt{font-size:12.5px;font-weight:500;color:var(--c-text-3);margin-top:8px}
+.seo-intro dd{font-size:12.5px;color:var(--c-text-4);line-height:1.7;margin:2px 0 0}
+.seo-links{display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:14px}
+.seo-links a{font-size:12.5px;color:var(--c-text-3);text-decoration:none}
+.seo-links a:hover{color:var(--c-accent);text-decoration:underline}
+
+/* ── 出处核查徽章 ── */
+.verified-badge{display:inline-flex;align-items:center;gap:3px;height:20px;padding:0 8px;background:rgba(46,125,50,.10);color:#2e7d32;border:1px solid rgba(46,125,50,.35);border-radius:var(--r-full);font-size:11px;font-weight:500;letter-spacing:.02em}
+.verified-badge .icon{width:11px;height:11px}
+[data-theme="dark"] .verified-badge{background:rgba(102,187,106,.12);color:#81c784;border-color:rgba(102,187,106,.35)}
+.detail-verify{margin-top:10px}
+.detail-verify a{color:var(--c-accent);text-decoration:none}
+.detail-verify a:hover{text-decoration:underline}
+
 /* ── Empty State ── */
 .empty-state{display:none;flex-direction:column;align-items:center;gap:14px;padding:80px 24px;text-align:center;animation:fadeIn var(--dur-base) var(--ease)}
 .empty-state.visible{display:flex}
