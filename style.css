@@ -25,8 +25,8 @@
   --shadow-lg: 0 12px 40px rgba(60,40,10,.14), 0 4px 12px rgba(60,40,10,.08);
   --shadow-xl: 0 24px 60px rgba(60,40,10,.18), 0 8px 20px rgba(60,40,10,.10);
   --r-sm:   8px; --r-md: 12px; --r-lg: 16px; --r-xl: 20px; --r-full: 9999px;
-  --font-serif: 'Noto Serif SC','Songti SC',Georgia,serif;
-  --font-sans:  'Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif;
+  --font-serif: 'Noto Serif CJK SC','Source Han Serif SC','Noto Serif SC','Songti SC',Georgia,serif;
+  --font-sans:  'Noto Sans CJK SC','Source Han Sans SC','MiSans','Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif;
   --ease:     cubic-bezier(0.4,0,0.2,1);
   --ease-out: cubic-bezier(0,0,0.2,1);
   --ease-in:  cubic-bezier(0.4,0,1,1);
